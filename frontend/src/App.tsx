@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import { Workspaces } from './pages/workspaces';
+import { Workspaces } from './pages/Workspaces';
 
 const Home = () => (
   <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
