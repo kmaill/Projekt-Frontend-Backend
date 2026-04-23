@@ -25,7 +25,7 @@ public class ReservationController {
     @PostMapping
     public ResponseEntity<?> createReservation(@RequestBody Reservation reservation) {
         try {
-            Reservation saved = reservationService.createReservation(reservation);
+            Reservation saved = reservationService.createReservation(reservation, null); // null temporarily
             return ResponseEntity.ok(saved);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
