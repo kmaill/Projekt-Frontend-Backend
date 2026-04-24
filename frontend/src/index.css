@@ -51,6 +51,14 @@
 }
 
 #root {
+  width: 100%;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+/* zostawiam na razie jakbyśmy zmieniali bo nwm jak bedzie działać na innych sprzetach a u mnie lepiej wyglada na całej szerokości 
+#root {
   width: 1126px;
   max-width: 100%;
   margin: 0 auto;
@@ -61,9 +69,11 @@
   flex-direction: column;
   box-sizing: border-box;
 }
+  */
 
 body {
   margin: 0;
+  overflow-x: hidden;
 }
 
 h1,
@@ -109,3 +119,13 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+.container {
+  width: 1126px;
+  max-width: 100%;
+  margin: 0 auto;
+  border-inline: 1px solid var(--border);
+  flex-grow: 1;
+  padding: 0 20px;
+  box-sizing: border-box;
+}/*do środkowania zawartości*/
