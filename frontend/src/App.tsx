@@ -1,24 +1,31 @@
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import { Workspaces } from './pages/Workspaces';
-
-const Home = () => (
-  <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
-    <h1>SpaceSync</h1>
-    <p>Zarządzaj swoją przestrzenią biurową</p>
-  </div>
-);
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Layout } from './components/layout/Layout';
+import { Home } from './pages/Home';
+import { Offer } from './pages/Offer';
+import { Login } from './pages/Login';
+import { Register } from './pages/Register';
+import { ClientPanel } from './pages/ClientPanel';
+import { AdminPanel } from './pages/AdminPanel';
+import { Checkout } from './pages/Checkout';
+import { ProtectedRoute } from './components/auth/ProtectedRoute';
 
 function App() {
   return (
     <BrowserRouter>
-      <nav style={{ padding: '10px 20px', background: '#333', color: 'white', display: 'flex', gap: '15px' }}>
-        <Link to="/" style={{ color: 'white', textDecoration: 'none' }}>Strona Główna</Link>
-        <Link to="/workspaces" style={{ color: 'white', textDecoration: 'none' }}>Oferta</Link>
-      </nav>
-
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/workspaces" element={<Workspaces />} />
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Home />} />
+          <Route path="offer" element={<Offer />} />
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
+          <Route path="checkout" element={<Checkout />} />
+          <Route element={<ProtectedRoute />}>
+            <Route path="client" element={<ClientPanel />} />
+          </Route>
+          <Route element={<ProtectedRoute requiredRole="ADMIN" />}>
+            <Route path="admin" element={<AdminPanel />} />
+          </Route>
+        </Route>
       </Routes>
     </BrowserRouter>
   );
