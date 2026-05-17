@@ -10,23 +10,6 @@ import { Checkout } from './pages/Checkout';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 
 function App() {
-
-  const [currentUser, setCurrentUser] = useState(mockLogin[0]);
-
-  const handleLogin = (username: string, password: string) => {
-    const user = mockLogin.find(
-      (u) => u.name === username && u.password === password
-    );
-
-    if (user) {
-      setCurrentUser({ ...user, log: true });
-      return true;
-    }
-    return false;
-  };
-
-  const isLoggedIn = currentUser.log;
-
   return (
     <BrowserRouter>
       <Routes>
