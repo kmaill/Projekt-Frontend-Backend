@@ -17,7 +17,7 @@ public class Addon {
     @Column(nullable = false)
     private BigDecimal price;
 
-    @Column(name = "billing_type")
+    @Column(name = "billing_type", nullable = false)
     private String billingType; // 'PER_HOUR' | 'PER_RESERVATION'
 
     public Addon() {}
