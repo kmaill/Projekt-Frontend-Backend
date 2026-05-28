@@ -1,8 +1,12 @@
 package com.spacesync.backend.controller;
 
-import com.spacesync.backend.model.Addon;
-import com.spacesync.backend.repository.AddonRepository;
+import com.spacesync.backend.requests.AddonCreateRequest;
+import com.spacesync.backend.requests.AddonUpdateRequest;
+import com.spacesync.backend.responses.AddonResponse;
+import com.spacesync.backend.service.AddonService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,43 +17,36 @@ import java.util.List;
 public class AddonController {
 
     @Autowired
-    private AddonRepository addonRepository;
+    private AddonService addonService;
 
     // READ
     @GetMapping
-    public List<Addon> getAllAddons() {
-        return addonRepository.findAll();
+    public ResponseEntity<List<AddonResponse>> getAllAddons() {
+        return ResponseEntity.ok(addonService.getAllAddons());
     }
 
     // CREATE
     @PostMapping
-    public Addon createAddon(@RequestBody Addon addon) {
-        return addonRepository.save(addon);
+    public ResponseEntity<AddonResponse> createAddon(@RequestBody AddonCreateRequest request) {
+        return new ResponseEntity<>(addonService.createAddon(request), HttpStatus.CREATED);
     }
     
     // READ (po id)
     @GetMapping("/{id}")
-    public Addon getAddonById(@PathVariable Long id) {
-        return addonRepository.findById(id).orElseThrow(() -> new RuntimeException("No addon of id: " + id));
+    public ResponseEntity<AddonResponse> getAddonById(@PathVariable Long id) {
+        return ResponseEntity.ok(addonService.getAddonById(id));
     }
 
     // UPDATE
     @PutMapping("/{id}")
-    public Addon updateAddon(@PathVariable Long id, @RequestBody Addon addonDetails) {
-        Addon existingAddon = addonRepository.findById(id).orElseThrow(() -> new RuntimeException("No addon of id: " + id));
-        
-        existingAddon.setName(addonDetails.getName());
-        existingAddon.setPrice(addonDetails.getPrice());
-        existingAddon.setBillingType(addonDetails.getBillingType());
-        
-        return addonRepository.save(existingAddon);
+    public ResponseEntity<AddonResponse> updateAddon(@PathVariable Long id, @RequestBody AddonUpdateRequest request) {
+        return ResponseEntity.ok(addonService.updateAddon(id, request));
     }
 
     // DELETE
     @DeleteMapping("/{id}")
-    public void deleteAddon(@PathVariable Long id) {
-        Addon existingAddon = addonRepository.findById(id).orElseThrow(() -> new RuntimeException("No addon of id: " + id));
-        
-        addonRepository.delete(existingAddon);
+    public ResponseEntity<Void> deleteAddon(@PathVariable Long id) {
+        addonService.deleteAddon(id);
+        return ResponseEntity.noContent().build();
     }
 }

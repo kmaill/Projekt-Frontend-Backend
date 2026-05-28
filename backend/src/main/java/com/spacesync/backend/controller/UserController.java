@@ -1,8 +1,12 @@
 package com.spacesync.backend.controller;
 
-import com.spacesync.backend.model.User;
-import com.spacesync.backend.repository.UserRepository;
+import com.spacesync.backend.requests.UserCreateRequest;
+import com.spacesync.backend.requests.UserUpdateRequest;
+import com.spacesync.backend.responses.UserResponse;
+import com.spacesync.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,47 +17,36 @@ import java.util.List;
 public class UserController {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     // READ
     @GetMapping
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public ResponseEntity<List<UserResponse>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
     // CREATE
     @PostMapping
-    public User createUser(@RequestBody User user) {
-        return userRepository.save(user);
+    public ResponseEntity<UserResponse> createUser(@RequestBody UserCreateRequest request) {
+        return new ResponseEntity<>(userService.createUser(request), HttpStatus.CREATED);
     }
     
     // READ (po id)
     @GetMapping("/{id}")
-    public User getUserById(@PathVariable Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new RuntimeException("No user of id: " + id));
+    public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.getUserById(id));
     }
 
     // UPDATE
     @PutMapping("/{id}")
-    public User updateUser(@PathVariable Long id, @RequestBody User userDetails) {
-        User existingUser = userRepository.findById(id).orElseThrow(() -> new RuntimeException("No user of id: " + id));
-        
-        existingUser.setName(userDetails.getName());
-        existingUser.setEmail(userDetails.getEmail());
-        existingUser.setPasswordHash(userDetails.getPasswordHash());
-        existingUser.setAuthProvider(userDetails.getAuthProvider());
-        existingUser.setAuthProviderId(userDetails.getAuthProviderId());
-        existingUser.setRole(userDetails.getRole());
-        existingUser.setCreatedAt(userDetails.getCreatedAt());
-        
-        return userRepository.save(existingUser);
+    public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @RequestBody UserUpdateRequest request) {
+        return ResponseEntity.ok(userService.updateUser(id, request));
     }
 
     // DELETE
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable Long id) {
-        User existingUser = userRepository.findById(id).orElseThrow(() -> new RuntimeException("No user of id: " + id));
-        
-        userRepository.delete(existingUser);
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import com.spacesync.backend.requests.ReservationCreateRequest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -115,39 +116,39 @@ public class ReservationServiceTests {
         LocalDateTime start = LocalDateTime.of(2026, 5, 1, 10, 0);
         LocalDateTime end = LocalDateTime.of(2026, 5, 1, 12, 0);
 
-        Reservation r1 = new Reservation();
-        r1.setWorkspace(workspace);
-        r1.setUser(user);
+        ReservationCreateRequest r1 = new ReservationCreateRequest();
+        r1.setWorkspaceId(workspace.getId());
+        r1.setUserId(user.getId());
         r1.setStartTime(start);
         r1.setEndTime(end);
         r1.setTotalPrice(new BigDecimal("200.00"));
-        reservationService.createReservation(r1, null);
+        reservationService.createReservation(r1);
 
-        Reservation r2 = new Reservation();
-        r2.setWorkspace(workspace);
-        r2.setUser(user);
+        ReservationCreateRequest r2 = new ReservationCreateRequest();
+        r2.setWorkspaceId(workspace.getId());
+        r2.setUserId(user.getId());
         r2.setStartTime(start.plusHours(1));
         r2.setEndTime(end.plusHours(1));
         r2.setTotalPrice(new BigDecimal("200.00"));
 
-        assertThrows(RuntimeException.class, () -> reservationService.createReservation(r2, null));
+        assertThrows(RuntimeException.class, () -> reservationService.createReservation(r2));
     }
 
     @Test
     void testCreateReservation_WithAddon() {
         LocalDateTime start = LocalDateTime.of(2026, 5, 1, 10, 0);
         LocalDateTime end = LocalDateTime.of(2026, 5, 1, 12, 0);
+        
         Reservation r1 = new Reservation();
-
         r1.setWorkspace(workspace);
         r1.setUser(user);
         r1.setStartTime(start);
         r1.setEndTime(end);
         r1.setTotalPrice(new BigDecimal("200.00"));
+        
+        reservationRepository.save(r1);
+        reservationService.priceIncludingAddons(r1, addon1, 1);
 
-        reservationService.createReservation(r1, addon1);
-
-        //System.out.println(r1.getTotalPrice());
         assertTrue( r1.getTotalPrice().compareTo(new BigDecimal(220.00)) == 0 );
 
         LocalDateTime start1 = LocalDateTime.of(2027, 5, 1, 10, 0);
@@ -160,7 +161,8 @@ public class ReservationServiceTests {
         r2.setEndTime(end1);
         r2.setTotalPrice(new BigDecimal("200.00"));
 
-        reservationService.createReservation(r2, addon2);
+        reservationRepository.save(r2);
+        reservationService.priceIncludingAddons(r2, addon2, 1);
 
         assertTrue( r2.getTotalPrice().compareTo(new BigDecimal("400.00")) == 0);
     }

@@ -1,8 +1,12 @@
 package com.spacesync.backend.controller;
 
-import com.spacesync.backend.model.CompanyProfile;
-import com.spacesync.backend.repository.CompanyProfileRepository;
+import com.spacesync.backend.requests.CompanyProfileCreateRequest;
+import com.spacesync.backend.requests.CompanyProfileUpdateRequest;
+import com.spacesync.backend.responses.CompanyProfileResponse;
+import com.spacesync.backend.service.CompanyProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,45 +17,36 @@ import java.util.List;
 public class CompanyProfileController {
 
     @Autowired
-    private CompanyProfileRepository companyProfileRepository;
+    private CompanyProfileService companyProfileService;
 
     // READ
     @GetMapping
-    public List<CompanyProfile> getAllCompanyProfiles() {
-        return companyProfileRepository.findAll();
+    public ResponseEntity<List<CompanyProfileResponse>> getAllCompanyProfiles() {
+        return ResponseEntity.ok(companyProfileService.getAllCompanyProfiles());
     }
 
     // CREATE
     @PostMapping
-    public CompanyProfile createCompanyProfile(@RequestBody CompanyProfile companyProfile) {
-        return companyProfileRepository.save(companyProfile);
+    public ResponseEntity<CompanyProfileResponse> createCompanyProfile(@RequestBody CompanyProfileCreateRequest request) {
+        return new ResponseEntity<>(companyProfileService.createCompanyProfile(request), HttpStatus.CREATED);
     }
     
     // READ (po id)
     @GetMapping("/{id}")
-    public CompanyProfile getCompanyProfileById(@PathVariable Long id) {
-        return companyProfileRepository.findById(id).orElseThrow(() -> new RuntimeException("No company profile of id: " + id));
+    public ResponseEntity<CompanyProfileResponse> getCompanyProfileById(@PathVariable Long id) {
+        return ResponseEntity.ok(companyProfileService.getCompanyProfileById(id));
     }
 
     // UPDATE
     @PutMapping("/{id}")
-    public CompanyProfile updateCompanyProfile(@PathVariable Long id, @RequestBody CompanyProfile companyProfileDetails) {
-        CompanyProfile existingCompanyProfile = companyProfileRepository.findById(id).orElseThrow(() -> new RuntimeException("No company profile of id: " + id));
-        
-        existingCompanyProfile.setUser(companyProfileDetails.getUser());
-        existingCompanyProfile.setCompanyName(companyProfileDetails.getCompanyName());
-        existingCompanyProfile.setNip(companyProfileDetails.getNip());
-        existingCompanyProfile.setAddress(companyProfileDetails.getAddress());
-        existingCompanyProfile.setContactEmail(companyProfileDetails.getContactEmail());
-        
-        return companyProfileRepository.save(existingCompanyProfile);
+    public ResponseEntity<CompanyProfileResponse> updateCompanyProfile(@PathVariable Long id, @RequestBody CompanyProfileUpdateRequest request) {
+        return ResponseEntity.ok(companyProfileService.updateCompanyProfile(id, request));
     }
 
     // DELETE
     @DeleteMapping("/{id}")
-    public void deleteCompanyProfile(@PathVariable Long id) {
-        CompanyProfile existingCompanyProfile = companyProfileRepository.findById(id).orElseThrow(() -> new RuntimeException("No company profile of id: " + id));
-        
-        companyProfileRepository.delete(existingCompanyProfile);
+    public ResponseEntity<Void> deleteCompanyProfile(@PathVariable Long id) {
+        companyProfileService.deleteCompanyProfile(id);
+        return ResponseEntity.noContent().build();
     }
 }

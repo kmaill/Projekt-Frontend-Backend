@@ -1,8 +1,12 @@
 package com.spacesync.backend.controller;
 
-import com.spacesync.backend.model.ReservationAddon;
-import com.spacesync.backend.repository.ReservationAddonRepository;
+import com.spacesync.backend.requests.ReservationAddonCreateRequest;
+import com.spacesync.backend.requests.ReservationAddonUpdateRequest;
+import com.spacesync.backend.responses.ReservationAddonResponse;
+import com.spacesync.backend.service.ReservationAddonService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,43 +17,39 @@ import java.util.List;
 public class ReservationAddonController {
 
     @Autowired
-    private ReservationAddonRepository reservationAddonRepository;
+    private ReservationAddonService reservationAddonService;
 
     // READ
     @GetMapping
-    public List<ReservationAddon> getAllReservationAddons() {
-        return reservationAddonRepository.findAll();
+    public ResponseEntity<List<ReservationAddonResponse>> getAllReservationAddons() {
+        return ResponseEntity.ok(reservationAddonService.getAllReservationAddons());
     }
 
     // CREATE
     @PostMapping
-    public ReservationAddon createReservationAddon(@RequestBody ReservationAddon reservationAddon) {
-        return reservationAddonRepository.save(reservationAddon);
+    public ResponseEntity<ReservationAddonResponse> createReservationAddon(@RequestBody ReservationAddonCreateRequest request) {
+        return new ResponseEntity<>(reservationAddonService.createReservationAddon(request), HttpStatus.CREATED);
     }
     
     // READ (po id)
-    @GetMapping("/{id}")
-    public ReservationAddon getReservationAddonById(@PathVariable Long id) {
-        return reservationAddonRepository.findById(id).orElseThrow(() -> new RuntimeException("No reservation addon of id: " + id));
+    @GetMapping("/{reservationId}/{addonId}")
+    public ResponseEntity<ReservationAddonResponse> getReservationAddon(@PathVariable Long reservationId, @PathVariable Long addonId) {
+        return ResponseEntity.ok(reservationAddonService.getReservationAddon(reservationId, addonId));
     }
 
     // UPDATE
-    @PutMapping("/{id}")
-    public ReservationAddon updateReservationAddon(@PathVariable Long id, @RequestBody ReservationAddon reservationAddonDetails) {
-        ReservationAddon existingReservationAddon = reservationAddonRepository.findById(id).orElseThrow(() -> new RuntimeException("No reservation addon of id: " + id));
-        
-        existingReservationAddon.setReservation(reservationAddonDetails.getReservation());
-        existingReservationAddon.setAddon(reservationAddonDetails.getAddon());
-        existingReservationAddon.setQuantity(reservationAddonDetails.getQuantity());
-        
-        return reservationAddonRepository.save(existingReservationAddon);
+    @PutMapping("/{reservationId}/{addonId}")
+    public ResponseEntity<ReservationAddonResponse> updateReservationAddon(
+            @PathVariable Long reservationId, 
+            @PathVariable Long addonId, 
+            @RequestBody ReservationAddonUpdateRequest request) {
+        return ResponseEntity.ok(reservationAddonService.updateReservationAddon(reservationId, addonId, request));
     }
 
     // DELETE
-    @DeleteMapping("/{id}")
-    public void deleteReservationAddon(@PathVariable Long id) {
-        ReservationAddon existingReservationAddon = reservationAddonRepository.findById(id).orElseThrow(() -> new RuntimeException("No reservation addon of id: " + id));
-        
-        reservationAddonRepository.delete(existingReservationAddon);
+    @DeleteMapping("/{reservationId}/{addonId}")
+    public ResponseEntity<Void> deleteReservationAddon(@PathVariable Long reservationId, @PathVariable Long addonId) {
+        reservationAddonService.deleteReservationAddon(reservationId, addonId);
+        return ResponseEntity.noContent().build();
     }
 }

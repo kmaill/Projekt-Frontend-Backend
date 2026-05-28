@@ -1,8 +1,12 @@
 package com.spacesync.backend.controller;
 
-import com.spacesync.backend.model.Payment;
-import com.spacesync.backend.repository.PaymentRepository;
+import com.spacesync.backend.requests.PaymentCreateRequest;
+import com.spacesync.backend.requests.PaymentStatusUpdateRequest;
+import com.spacesync.backend.responses.PaymentResponse;
+import com.spacesync.backend.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,47 +17,36 @@ import java.util.List;
 public class PaymentController {
 
     @Autowired
-    private PaymentRepository paymentRepository;
+    private PaymentService paymentService;
 
     // READ
     @GetMapping
-    public List<Payment> getAllPayments() {
-        return paymentRepository.findAll();
+    public ResponseEntity<List<PaymentResponse>> getAllPayments() {
+        return ResponseEntity.ok(paymentService.getAllPayments());
     }
 
     // CREATE
     @PostMapping
-    public Payment createPayment(@RequestBody Payment payment) {
-        return paymentRepository.save(payment);
+    public ResponseEntity<PaymentResponse> createPayment(@RequestBody PaymentCreateRequest request) {
+        return new ResponseEntity<>(paymentService.createPayment(request), HttpStatus.CREATED);
     }
     
     // READ (po id)
     @GetMapping("/{id}")
-    public Payment getPaymentById(@PathVariable Long id) {
-        return paymentRepository.findById(id).orElseThrow(() -> new RuntimeException("No payment of id: " + id));
+    public ResponseEntity<PaymentResponse> getPaymentById(@PathVariable Long id) {
+        return ResponseEntity.ok(paymentService.getPaymentById(id));
     }
 
     // UPDATE
     @PutMapping("/{id}")
-    public Payment updatePayment(@PathVariable Long id, @RequestBody Payment paymentDetails) {
-        Payment existingPayment = paymentRepository.findById(id).orElseThrow(() -> new RuntimeException("No payment of id: " + id));
-        
-        existingPayment.setReservation(paymentDetails.getReservation());
-        existingPayment.setAmount(paymentDetails.getAmount());
-        existingPayment.setPaymentMethod(paymentDetails.getPaymentMethod());
-        existingPayment.setStatus(paymentDetails.getStatus());
-        existingPayment.setTransactionId(paymentDetails.getTransactionId());
-        existingPayment.setApprovedBy(paymentDetails.getApprovedBy());
-        existingPayment.setCreatedAt(paymentDetails.getCreatedAt());
-        
-        return paymentRepository.save(existingPayment);
+    public ResponseEntity<PaymentResponse> updatePayment(@PathVariable Long id, @RequestBody PaymentStatusUpdateRequest request) {
+        return ResponseEntity.ok(paymentService.updatePaymentStatus(id, request));
     }
 
     // DELETE
     @DeleteMapping("/{id}")
-    public void deletePayment(@PathVariable Long id) {
-        Payment existingPayment = paymentRepository.findById(id).orElseThrow(() -> new RuntimeException("No payment of id: " + id));
-        
-        paymentRepository.delete(existingPayment);
+    public ResponseEntity<Void> deletePayment(@PathVariable Long id) {
+        paymentService.deletePayment(id);
+        return ResponseEntity.noContent().build();
     }
 }

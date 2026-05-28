@@ -1,8 +1,12 @@
 package com.spacesync.backend.controller;
 
-import com.spacesync.backend.model.Workspace;
-import com.spacesync.backend.repository.WorkspaceRepository;
+import com.spacesync.backend.requests.WorkspaceCreateRequest;
+import com.spacesync.backend.requests.WorkspaceUpdateRequest;
+import com.spacesync.backend.responses.WorkspaceResponse;
+import com.spacesync.backend.service.WorkspaceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,43 +17,36 @@ import java.util.List;
 public class WorkspaceController {
 
     @Autowired
-    private WorkspaceRepository workspaceRepository;
+    private WorkspaceService workspaceService;
 
     // READ
     @GetMapping
-    public List<Workspace> getAllWorkspaces() {
-        return workspaceRepository.findAll();
+    public ResponseEntity<List<WorkspaceResponse>> getAllWorkspaces() {
+        return ResponseEntity.ok(workspaceService.getAllWorkspaces());
     }
 
     // CREATE
     @PostMapping
-    public Workspace createWorkspace(@RequestBody Workspace workspace) {
-        return workspaceRepository.save(workspace);
+    public ResponseEntity<WorkspaceResponse> createWorkspace(@RequestBody WorkspaceCreateRequest request) {
+        return new ResponseEntity<>(workspaceService.createWorkspace(request), HttpStatus.CREATED);
     }
     
     // READ (po id)
     @GetMapping("/{id}")
-    public Workspace getWorkspaceById(@PathVariable Long id) {
-        return workspaceRepository.findById(id).orElseThrow(() -> new RuntimeException("No workspace of id: " + id));
+    public ResponseEntity<WorkspaceResponse> getWorkspaceById(@PathVariable Long id) {
+        return ResponseEntity.ok(workspaceService.getWorkspaceById(id));
     }
 
     // UPDATE
     @PutMapping("/{id}")
-    public Workspace updateWorkspace(@PathVariable Long id, @RequestBody Workspace workspaceDetails) {
-        Workspace existingWorkspace = workspaceRepository.findById(id).orElseThrow(() -> new RuntimeException("No workspace of id: " + id));
-        
-        existingWorkspace.setName(workspaceDetails.getName());
-        existingWorkspace.setType(workspaceDetails.getType());
-        existingWorkspace.setPricePerHour(workspaceDetails.getPricePerHour());
-        
-        return workspaceRepository.save(existingWorkspace);
+    public ResponseEntity<WorkspaceResponse> updateWorkspace(@PathVariable Long id, @RequestBody WorkspaceUpdateRequest request) {
+        return ResponseEntity.ok(workspaceService.updateWorkspace(id, request));
     }
 
     // DELETE
     @DeleteMapping("/{id}")
-    public void deleteWorkspace(@PathVariable Long id) {
-        Workspace existingWorkspace = workspaceRepository.findById(id).orElseThrow(() -> new RuntimeException("No workspace of id: " + id));
-        
-        workspaceRepository.delete(existingWorkspace);
+    public ResponseEntity<Void> deleteWorkspace(@PathVariable Long id) {
+        workspaceService.deleteWorkspace(id);
+        return ResponseEntity.noContent().build();
     }
 }
