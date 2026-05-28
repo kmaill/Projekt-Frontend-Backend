@@ -25,6 +25,10 @@ export const authSlice = createSlice({
       state.isAuthenticated = true;
       state.user = { email: 'admin@test.com', role: 'ADMIN' };
     },
+    login: (state, input) => {
+      state.isAuthenticated = true;
+      state.user = { email: input.payload.email, role: input.payload.role };
+    },
     logout: (state) => {
       state.isAuthenticated = false;
       state.user = null;
@@ -32,5 +36,5 @@ export const authSlice = createSlice({
   },
 });
 
-export const { loginAsUser, loginAsAdmin, logout } = authSlice.actions;
+export const { loginAsUser, loginAsAdmin, login, logout } = authSlice.actions;
 export default authSlice.reducer;

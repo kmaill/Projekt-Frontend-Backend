@@ -1,11 +1,28 @@
 import { Mail, Lock } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { loginAsUser, loginAsAdmin } from '../store/authSlice';
+import {useDispatch} from 'react-redux';
+import {loginAsUser, loginAsAdmin, login/*, login */} from '../store/authSlice';
+import {useState} from "react";
+import { loginRequest } from '../api/userApi';
 
 export const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [message, setMessage] = useState('');
+
+  const handleLogin = async () => {
+
+    try {
+      const loginAttempt = await loginRequest(email, password);
+      dispatch(login(loginAttempt));
+      navigate('/');
+    }
+    catch (error) {
+      setMessage("Nieprawidłowy email lub hasło");
+    }
+  }
 
   const handleLoginUser = () => {
     dispatch(loginAsUser());
@@ -36,6 +53,7 @@ export const Login = () => {
                 type="email" 
                 className="block w-full pl-10 pr-3 py-2.5 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-600 focus:border-transparent outline-none transition-all dark:text-white" 
                 placeholder="twoj@email.com"
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
           </div>
@@ -53,9 +71,22 @@ export const Login = () => {
                 type="password" 
                 className="block w-full pl-10 pr-3 py-2.5 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-600 focus:border-transparent outline-none transition-all dark:text-white" 
                 placeholder="••••••••"
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
           </div>
+
+          <div className="text-center mb-8">
+            <p className="text-gray-500 dark:text-gray-400">{message}</p>
+          </div>
+
+          <button
+              type="button"
+              onClick={handleLogin}
+              className="w-full bg-emerald-600 text-white font-bold py-3 rounded-lg hover:bg-emerald-700 transition-colors shadow-md hover:shadow-lg"
+          >
+            Zaloguj
+          </button>
 
           <button 
             type="button" 

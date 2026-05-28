@@ -7,9 +7,12 @@ import com.spacesync.backend.requests.UserCreateRequest;
 import com.spacesync.backend.requests.UserUpdateRequest;
 import com.spacesync.backend.responses.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,6 +32,24 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse getUserById(Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No user of id: " + id));
+        return mapToResponse(user);
+    }
+
+    @Override
+    public UserResponse getUserByEmail(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Wrong credentials"));
+        return mapToResponse(user);
+    }
+
+    @Override
+    public UserResponse validateUser(String email, String password) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Wrong credentials"));
+        // Hashowanie hasła
+        // Obsługa authProvidera
+        //return (Objects.equals(user.getPasswordHash(), password)) ? mapToResponse(user) : null;
+        if(!Objects.equals(user.getPasswordHash(), password)) {
+            throw new RuntimeException("Wrong credentials");
+        }
         return mapToResponse(user);
     }
 

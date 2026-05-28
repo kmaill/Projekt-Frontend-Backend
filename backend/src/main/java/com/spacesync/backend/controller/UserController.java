@@ -1,6 +1,7 @@
 package com.spacesync.backend.controller;
 
 import com.spacesync.backend.requests.UserCreateRequest;
+import com.spacesync.backend.requests.UserLoginRequest;
 import com.spacesync.backend.requests.UserUpdateRequest;
 import com.spacesync.backend.responses.UserResponse;
 import com.spacesync.backend.service.UserService;
@@ -35,6 +36,18 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUserById(id));
+    }
+
+    // READ (po email'u)
+    @GetMapping("/{email}")
+    public ResponseEntity<UserResponse> getUserByEmail(@PathVariable String email) {
+        return ResponseEntity.ok(userService.getUserByEmail(email));
+    }
+
+    // LOGIN
+    @PostMapping("/login")
+    public ResponseEntity<UserResponse> validateUser(@RequestBody UserLoginRequest request) {
+        return new ResponseEntity<>(userService.validateUser(request.getEmail(), request.getPassword()), HttpStatus.OK);
     }
 
     // UPDATE
