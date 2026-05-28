@@ -35,7 +35,7 @@ export const Offer = () => {
   };
 
   const handleAddToCart = () => {
-    if (!selectedSpace || !date) return;
+    if (!selectedSpace || !date || (Date.parse(date) <= Date.now())) return;
 
     const addonsToAdd = AVAILABLE_ADDONS.filter(a => selectedAddons.includes(a.id));
 

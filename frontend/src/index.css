@@ -1,13 +1,3 @@
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
-
-.container {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  border-inline: 1px solid var(--border);
-  flex-grow: 1;
-  padding: 0 20px;
-  box-sizing: border-box;
-}/*do środkowania zawartości*/
