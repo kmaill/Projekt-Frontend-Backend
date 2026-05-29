@@ -1,12 +1,25 @@
 import { Mail, Lock, User as UserIcon } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import {useState} from "react";
+import {register} from "../api/userApi.ts";
 
 export const Register = () => {
   const navigate = useNavigate();
 
-  const handleRegister = (e: React.FormEvent) => {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [message, setMessage] = useState('');
+
+  const handleRegister = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
-    navigate('/login');
+    try {
+      await register(name, email, password);
+      navigate('/login');
+    }
+    catch (error) {
+      setMessage("Istnieje już konto z takim emailem");
+    }
   };
 
   return (
@@ -30,6 +43,7 @@ export const Register = () => {
                 required
                 className="block w-full pl-10 pr-3 py-2.5 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-600 focus:border-transparent outline-none transition-all dark:text-white" 
                 placeholder="Jan Kowalski"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
               />
             </div>
           </div>
@@ -45,6 +59,7 @@ export const Register = () => {
                 required
                 className="block w-full pl-10 pr-3 py-2.5 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-600 focus:border-transparent outline-none transition-all dark:text-white" 
                 placeholder="twoj@email.com"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
               />
             </div>
           </div>
@@ -61,8 +76,13 @@ export const Register = () => {
                 minLength={8}
                 className="block w-full pl-10 pr-3 py-2.5 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-600 focus:border-transparent outline-none transition-all dark:text-white" 
                 placeholder="••••••••"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
               />
             </div>
+          </div>
+
+          <div className="text-center mb-8">
+            <p className="text-gray-500 dark:text-gray-400">{message}</p>
           </div>
 
           <button 

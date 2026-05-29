@@ -48,13 +48,17 @@ public class UserServiceImpl implements UserService {
         // Obsługa authProvidera
         //return (Objects.equals(user.getPasswordHash(), password)) ? mapToResponse(user) : null;
         if(!Objects.equals(user.getPasswordHash(), password)) {
-            throw new RuntimeException("Wrong credentials");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Wrong credentials");
         }
         return mapToResponse(user);
     }
 
     @Override
     public UserResponse createUser(UserCreateRequest request) {
+        if(userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Account with Email exists");
+        }
+
         User user = new User();
         user.setName(request.getName());
         user.setEmail(request.getEmail());
