@@ -28,7 +28,7 @@ export const Checkout = () => {
                     <strong>{t('checkout.addons')}</strong>
                     <ul className="list-disc pl-4 mt-1">
                       {item.addons.map(addon => (
-                        <li key={addon.id}>{addon.name} (+{addon.price} PLN{addon.type === 'PER_HOUR' ? '/h' : ''})</li>
+                        <li key={addon.id}>{addon.name} (+{addon.price} PLN{addon.billing_type === 'PER_HOUR' ? '/h' : ''})</li>
                       ))}
                     </ul>
                   </div>
@@ -37,7 +37,7 @@ export const Checkout = () => {
               <div className="text-right flex items-center sm:block gap-4">
                 <div>
                   <p className="font-bold text-lg whitespace-nowrap">
-                    {item.pricePerHour * item.hours + item.addons.reduce((acc, a) => acc + (a.type === 'PER_HOUR' ? a.price * item.hours : a.price), 0)} PLN
+                    {item.pricePerHour * item.hours + item.addons.reduce((acc, a) => acc + (a.billing_type === 'PER_HOUR' ? a.price * item.hours : a.price), 0)} PLN
                   </p>
                 </div>
                 <button 

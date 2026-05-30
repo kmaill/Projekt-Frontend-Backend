@@ -1,34 +1,34 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { addItem } from '../store/cartSlice';
 import type { Addon } from '../store/cartSlice';
+import { fetchWorkspaces, fetchAddons } from '../api/offerApi';
 
-const MOCK_WORKSPACES = [
-  { id: 1, name: 'Biurko Open Space A1', type: 'DESK', pricePerHour: 20, capacity: 1, image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=500&q=60' },
-  { id: 2, name: 'Biurko Open Space A2', type: 'DESK', pricePerHour: 20, capacity: 1, image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=500&q=60' },
-  { id: 3, name: 'Sala Konferencyjna Mała', type: 'CONFERENCE_ROOM', pricePerHour: 80, capacity: 6, image: 'https://images.unsplash.com/photo-1571624436279-b272aff752b5?auto=format&fit=crop&w=500&q=60' },
-  { id: 4, name: 'Sala Konferencyjna Duża', type: 'CONFERENCE_ROOM', pricePerHour: 150, capacity: 15, image: 'https://images.unsplash.com/photo-1431540015161-0bf868a2d407?auto=format&fit=crop&w=500&q=60' },
-];
-
-const AVAILABLE_ADDONS: Addon[] = [
-  { id: 'a1', name: 'Projektor multimedialny', price: 20, type: 'PER_HOUR' },
-  { id: 'a2', name: 'Catering (kawa, ciastka)', price: 50, type: 'PER_RESERVATION' },
-];
+interface Workspace {
+  id: number;
+  name: string;
+  type: string;
+  pricePerHour: number;
+  capacity: number;
+}
 
 export const Offer = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+
+   const [offers, setOffers] = useState<Workspace[]>([]);
+   const [addons, setAddons] = useState<Addon[]>([]);
   
   const [filter, setFilter] = useState('ALL');
-  const [selectedSpace, setSelectedSpace] = useState<typeof MOCK_WORKSPACES[0] | null>(null);
+  const [selectedSpace, setSelectedSpace] = useState<Workspace | null>(null);
   
   const [date, setDate] = useState('');
   const [startTime, setStartTime] = useState('09:00');
   const [hours, setHours] = useState(1);
   const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
 
-  const filteredWorkspaces = MOCK_WORKSPACES.filter(w => filter === 'ALL' || w.type === filter);
+  const filteredWorkspaces = offers.filter(w => filter === 'ALL' || w.type === filter);
 
   const toggleAddon = (id: string) => {
     setSelectedAddons(prev => prev.includes(id) ? prev.filter(a => a !== id) : [...prev, id]);
@@ -37,7 +37,7 @@ export const Offer = () => {
   const handleAddToCart = () => {
     if (!selectedSpace || !date || (Date.parse(date) <= Date.now())) return;
 
-    const addonsToAdd = AVAILABLE_ADDONS.filter(a => selectedAddons.includes(a.id));
+    const addonsToAdd = addons.filter(a => selectedAddons.includes(a.id));
 
     dispatch(addItem({
       id: Date.now().toString(),
@@ -55,6 +55,15 @@ export const Offer = () => {
     setHours(1);
     setSelectedAddons([]);
   };
+
+  useEffect(() => {
+      fetchWorkspaces()
+        .then(data => setOffers(data))
+        .catch(err => console.error(err));
+      fetchAddons()
+        .then(data => setAddons(data))
+        .catch(err => console.error(err));
+  }, []);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-10 w-full dark:text-gray-100 transition-colors">
@@ -74,7 +83,7 @@ export const Offer = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {filteredWorkspaces.map(workspace => (
           <div key={workspace.id} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-shadow flex flex-col">
-            <img src={workspace.image} alt={workspace.name} className="w-full h-48 object-cover" />
+            <img src={'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=500&q=60'} alt={workspace.name} className="w-full h-48 object-cover" />
             <div className="p-5 flex-grow flex flex-col">
               <div className="flex justify-between items-start mb-2">
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white">{workspace.name}</h3>
@@ -128,12 +137,12 @@ export const Offer = () => {
                 <div className="pt-2">
                   <label className="block text-sm font-medium mb-2">{t('booking.addons')}</label>
                   <div className="space-y-2">
-                    {AVAILABLE_ADDONS.map(addon => (
+                    {addons.map(addon => (
                       <label key={addon.id} className="flex items-center gap-2 p-2 border dark:border-gray-700 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
                         <input type="checkbox" checked={selectedAddons.includes(addon.id)} onChange={() => toggleAddon(addon.id)} className="w-4 h-4 text-emerald-600" />
                         <div className="flex justify-between w-full">
                           <span>{addon.name}</span>
-                          <span className="font-semibold">+{addon.price} PLN {addon.type === 'PER_HOUR' ? '/h' : ''}</span>
+                          <span className="font-semibold">+{addon.price} PLN {addon.billing_type === 'PER_HOUR' ? '/h' : ''}</span>
                         </div>
                       </label>
                     ))}
