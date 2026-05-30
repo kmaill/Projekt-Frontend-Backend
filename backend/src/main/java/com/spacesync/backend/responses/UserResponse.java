@@ -10,6 +10,7 @@ public class UserResponse {
     private String authProvider;
     private String authProviderId;
     private LocalDateTime createdAt;
+    private String token;
 
     public UserResponse() {}
 
@@ -27,4 +28,6 @@ public class UserResponse {
     public void setAuthProviderId(String authProviderId) { this.authProviderId = authProviderId; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public String getToken() { return token; }
+    public void setToken(String token) { this.token = token; }
 }

@@ -50,6 +50,12 @@ public class UserController {
         return new ResponseEntity<>(userService.validateUser(request.getEmail(), request.getPassword()), HttpStatus.OK);
     }
 
+    // LOGIN
+    @PostMapping("/login/my")
+    public ResponseEntity<UserResponse> validateUser(@RequestHeader("Authorization") String auth) {
+        return new ResponseEntity<>(userService.validateUser(auth), HttpStatus.OK);
+    }
+
     // UPDATE
     @PutMapping("/{id}")
     public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @RequestBody UserUpdateRequest request) {

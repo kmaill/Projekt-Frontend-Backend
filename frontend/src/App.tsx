@@ -8,8 +8,32 @@ import { ClientPanel } from './pages/ClientPanel';
 import { AdminPanel } from './pages/AdminPanel';
 import { Checkout } from './pages/Checkout';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
+import {useEffect} from "react";
+import {refreshToken} from "./api/userApi.ts";
+import {login} from "./store/authSlice.ts";
+import {useDispatch} from "react-redux";
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const refresh = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if(token != null) {
+          const refreshedToken = await refreshToken(token);
+          dispatch(login(refreshedToken));
+          localStorage.setItem('token', refreshedToken.token);
+          //console.log(refreshedToken);
+        }
+      }
+      catch (error) {
+        console.log(error);
+      }
+    }
+    refresh();
+  },[])
+
   return (
     <BrowserRouter>
       <Routes>

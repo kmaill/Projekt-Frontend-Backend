@@ -5,6 +5,7 @@ interface AuthState {
   user: {
     email: string;
     role: 'USER' | 'ADMIN';
+    id: number;
   } | null;
 }
 
@@ -19,15 +20,15 @@ export const authSlice = createSlice({
   reducers: {
     loginAsUser: (state) => {
       state.isAuthenticated = true;
-      state.user = { email: 'klient@test.com', role: 'USER' };
+      state.user = { email: 'klient@test.com', role: 'USER', id: 0 };
     },
     loginAsAdmin: (state) => {
       state.isAuthenticated = true;
-      state.user = { email: 'admin@test.com', role: 'ADMIN' };
+      state.user = { email: 'admin@test.com', role: 'ADMIN', id: 0 };
     },
     login: (state, input) => {
       state.isAuthenticated = true;
-      state.user = { email: input.payload.email, role: input.payload.role };
+      state.user = { email: input.payload.email, role: input.payload.role, id: input.payload.id };
     },
     logout: (state) => {
       state.isAuthenticated = false;

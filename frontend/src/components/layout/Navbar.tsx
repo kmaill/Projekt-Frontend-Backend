@@ -38,6 +38,7 @@ export const Navbar = () => {
   const isActive = (path: string) => location.pathname === path;
   const handleLogout = () => {
     dispatch(logout());
+    localStorage.removeItem('token');
     setIsMenuOpen(false);
   };
 

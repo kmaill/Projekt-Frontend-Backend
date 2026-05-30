@@ -21,6 +21,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private JwtService jwtService;
+
     @Override
     public List<UserResponse> getAllUsers() {
         return userRepository.findAll()
@@ -50,7 +53,24 @@ public class UserServiceImpl implements UserService {
         if(!Objects.equals(user.getPasswordHash(), password)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Wrong credentials");
         }
-        return mapToResponse(user);
+
+        String token = jwtService.generateToken(user);
+
+        UserResponse response = mapToResponse(user);
+        response.setToken(token);
+        return response;
+    }
+
+    @Override
+    public UserResponse validateUser(String token) {
+        token = token.replace("Bearer ","");
+        if(!jwtService.validateToken(token)) {
+            throw new ResponseStatusException(HttpStatus.GONE, "Token invalid");
+        }
+        User user = userRepository.findById(jwtService.getId(token)).orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Wrong credentials"));
+        UserResponse response = mapToResponse(user);
+        response.setToken(jwtService.generateToken(user));
+        return response;
     }
 
     @Override

@@ -1,9 +1,12 @@
 import { Link } from 'react-router-dom';
 import { Building2, Laptop, CalendarCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import {useSelector} from "react-redux";
+import type {RootState} from "../store/store.ts";
 
 export const Home = () => {
   const { t } = useTranslation();
+  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
 
   return (
     <div className="flex flex-col dark:bg-gray-900 transition-colors duration-200">
@@ -17,9 +20,12 @@ export const Home = () => {
             <Link to="/offer" className="bg-white text-emerald-600 px-8 py-3 rounded-lg font-semibold text-lg hover:bg-gray-100 transition-colors">
               {t('home.checkOffer')}
             </Link>
-            <Link to="/login" className="bg-emerald-700 text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-emerald-800 transition-colors border border-emerald-500">
-              {t('home.login')}
-            </Link>
+            { !isAuthenticated ? (
+                <Link to="/login" className="bg-emerald-700 text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-emerald-800 transition-colors border border-emerald-500">
+                  {t('home.login')}
+                </Link>
+              ) : <></>
+            }
           </div>
         </div>
       </section>

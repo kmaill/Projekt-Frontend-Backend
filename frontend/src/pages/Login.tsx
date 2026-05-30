@@ -16,6 +16,8 @@ export const Login = () => {
 
     try {
       const loginAttempt = await loginRequest(email, password);
+      localStorage.setItem('token', await loginAttempt.token);
+      console.log(loginAttempt.token);
       dispatch(login(loginAttempt));
       navigate('/');
     }

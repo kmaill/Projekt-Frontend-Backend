@@ -11,6 +11,7 @@ public interface UserService {
     UserResponse getUserById(Long id);
     UserResponse getUserByEmail(String email);
     UserResponse validateUser(String email, String password);
+    UserResponse validateUser(String token);
     UserResponse createUser(UserCreateRequest request);
     UserResponse updateUser(Long id, UserUpdateRequest request);
     void deleteUser(Long id);

@@ -33,6 +33,8 @@ public class CompanyProfileServiceImpl implements CompanyProfileService {
     @Override
     public CompanyProfileResponse getCompanyProfileById(Long id) {
         CompanyProfile profile = companyProfileRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No company profile of id: " + id));
+        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No user of id: " + id));
+        //if(profile.getUser().getId() )
         return mapToResponse(profile);
     }
 
