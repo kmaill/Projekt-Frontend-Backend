@@ -6,6 +6,9 @@ import com.spacesync.backend.repository.UserRepository;
 import com.spacesync.backend.requests.UserCreateRequest;
 import com.spacesync.backend.requests.UserUpdateRequest;
 import com.spacesync.backend.responses.UserResponse;
+import com.spacesync.backend.service.util.HashingUtil;
+
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -50,7 +53,8 @@ public class UserServiceImpl implements UserService {
         // Hashowanie hasła
         // Obsługa authProvidera
         //return (Objects.equals(user.getPasswordHash(), password)) ? mapToResponse(user) : null;
-        if(!Objects.equals(user.getPasswordHash(), password)) {
+        String userHash = userRepository.findByEmail(email).get().getPasswordHash();
+        if(!BCrypt.checkpw(password, userHash)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Wrong credentials");
         }
 
@@ -82,8 +86,11 @@ public class UserServiceImpl implements UserService {
         User user = new User();
         user.setName(request.getName());
         user.setEmail(request.getEmail());
-        // potem sie zrobi hashowanie
-        user.setPasswordHash(request.getPassword()); 
+        
+        // hashowanie
+        String hashedPass = HashingUtil.hashPassword(request.getPassword());
+
+        user.setPasswordHash(hashedPass); 
         user.setAuthProvider(request.getAuthProvider());
         user.setAuthProviderId(request.getAuthProviderId());
         
