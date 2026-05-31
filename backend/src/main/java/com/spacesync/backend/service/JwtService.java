@@ -26,6 +26,7 @@ public class JwtService {
     }
 
     public boolean validateToken(String token) {
+        token = token.replace("Bearer ","");
         try {
             Claims claim = Jwts.parser()
                     .verifyWith(Keys.hmacShaKeyFor(key.getBytes()))
@@ -41,6 +42,7 @@ public class JwtService {
     }
 
     public Long getId(String token) {
+        token = token.replace("Bearer ","");
         return Jwts.parser()
                 .verifyWith(Keys.hmacShaKeyFor(key.getBytes()))
                 .build()

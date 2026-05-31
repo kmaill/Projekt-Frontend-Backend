@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse validateUser(String token) {
-        token = token.replace("Bearer ","");
+
         if(!jwtService.validateToken(token)) {
             throw new ResponseStatusException(HttpStatus.GONE, "Token invalid");
         }

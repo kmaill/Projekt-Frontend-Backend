@@ -9,7 +9,9 @@ import com.spacesync.backend.requests.CompanyProfileCreateRequest;
 import com.spacesync.backend.requests.CompanyProfileUpdateRequest;
 import com.spacesync.backend.responses.CompanyProfileResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,6 +25,9 @@ public class CompanyProfileServiceImpl implements CompanyProfileService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private JwtService jwtService;
+
     @Override
     public List<CompanyProfileResponse> getAllCompanyProfiles() {
         return companyProfileRepository.findAll().stream()
@@ -31,18 +36,22 @@ public class CompanyProfileServiceImpl implements CompanyProfileService {
     }
 
     @Override
-    public CompanyProfileResponse getCompanyProfileById(Long id) {
-        CompanyProfile profile = companyProfileRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No company profile of id: " + id));
-        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No user of id: " + id));
-        //if(profile.getUser().getId() )
-        return mapToResponse(profile);
+    public CompanyProfileResponse getCompanyProfile(String token) {
+        CompanyProfile companyProfile = null;
+        if(jwtService.validateToken(token)) {
+            companyProfile = companyProfileRepository.findByUserId(jwtService.getId(token)).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"No profile found"));
+        }
+
+        return mapToResponse(companyProfile);
     }
 
     @Override
-    public CompanyProfileResponse createCompanyProfile(CompanyProfileCreateRequest request) {
-        User user = userRepository.findById(request.getUserId()).orElseThrow(() -> new ResourceNotFoundException("No user of id: " + request.getUserId()));
-
+    public CompanyProfileResponse createCompanyProfile(String token, CompanyProfileCreateRequest request) {
         CompanyProfile profile = new CompanyProfile();
+        if(!jwtService.validateToken(token)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid Token");
+        }
+        User user = userRepository.findById(jwtService.getId(token)).orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Wrong credentials"));
         profile.setUser(user);
         profile.setCompanyName(request.getCompanyName());
         profile.setNip(request.getNip());
@@ -74,10 +83,10 @@ public class CompanyProfileServiceImpl implements CompanyProfileService {
 
     private CompanyProfileResponse mapToResponse(CompanyProfile profile) {
         CompanyProfileResponse response = new CompanyProfileResponse();
-        response.setId(profile.getId());
-        if (profile.getUser() != null) {
-            response.setUserId(profile.getUser().getId());
-        }
+//        response.setId(profile.getId());
+//        if (profile.getUser() != null) {
+//            response.setUserId(profile.getUser().getId());
+//        }
         response.setCompanyName(profile.getCompanyName());
         response.setNip(profile.getNip());
         response.setAddress(profile.getAddress());

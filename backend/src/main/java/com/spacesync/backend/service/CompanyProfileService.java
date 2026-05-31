@@ -8,8 +8,8 @@ import java.util.List;
 
 public interface CompanyProfileService {
     List<CompanyProfileResponse> getAllCompanyProfiles();
-    CompanyProfileResponse getCompanyProfileById(Long id);
-    CompanyProfileResponse createCompanyProfile(CompanyProfileCreateRequest request);
+    CompanyProfileResponse getCompanyProfile(String token);
+    CompanyProfileResponse createCompanyProfile(String token, CompanyProfileCreateRequest request);
     CompanyProfileResponse updateCompanyProfile(Long id, CompanyProfileUpdateRequest request);
     void deleteCompanyProfile(Long id);
 }

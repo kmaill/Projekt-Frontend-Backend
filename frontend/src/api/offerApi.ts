@@ -1,4 +1,4 @@
-export const fetchWorkspaces = async () => {
+ export const fetchWorkspaces = async () => {
     const res = await fetch('http://localhost:8080/api/workspaces', {
         method: "GET",
         headers: {

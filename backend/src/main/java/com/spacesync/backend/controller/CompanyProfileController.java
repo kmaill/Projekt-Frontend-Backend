@@ -27,14 +27,15 @@ public class CompanyProfileController {
 
     // CREATE
     @PostMapping
-    public ResponseEntity<CompanyProfileResponse> createCompanyProfile(@RequestBody CompanyProfileCreateRequest request) {
-        return new ResponseEntity<>(companyProfileService.createCompanyProfile(request), HttpStatus.CREATED);
+    public ResponseEntity<CompanyProfileResponse> createCompanyProfile(@RequestHeader("Authorization") String auth,
+                @RequestBody CompanyProfileCreateRequest request) {
+        return new ResponseEntity<>(companyProfileService.createCompanyProfile(auth, request), HttpStatus.CREATED);
     }
     
     // READ (po id)
-    @GetMapping("/{id}")
-    public ResponseEntity<CompanyProfileResponse> getCompanyProfileById(@PathVariable Long id) {
-        return ResponseEntity.ok(companyProfileService.getCompanyProfileById(id));
+    @GetMapping("/my")
+    public ResponseEntity<CompanyProfileResponse> getCompanyProfileById(@RequestHeader("Authorization") String auth) {
+        return new ResponseEntity<>(companyProfileService.getCompanyProfile(auth), HttpStatus.OK);
     }
 
     // UPDATE
