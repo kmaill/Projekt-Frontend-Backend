@@ -10,7 +10,7 @@ import { Checkout } from './pages/Checkout';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import {useEffect} from "react";
 import {refreshToken} from "./api/userApi.ts";
-import {login} from "./store/authSlice.ts";
+import {login, setAuthChecked} from "./store/authSlice.ts";
 import {useDispatch} from "react-redux";
 
 function App() {
@@ -25,10 +25,14 @@ function App() {
           dispatch(login(refreshedToken));
           localStorage.setItem('token', refreshedToken.token);
           //console.log(refreshedToken);
+        } else {
+          dispatch(setAuthChecked());
         }
       }
       catch (error) {
         console.log(error);
+        localStorage.removeItem('token');
+        dispatch(setAuthChecked());
       }
     }
     refresh();

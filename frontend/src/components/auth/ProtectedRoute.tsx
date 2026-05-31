@@ -7,7 +7,11 @@ interface ProtectedRouteProps {
 }
 
 export const ProtectedRoute = ({ requiredRole }: ProtectedRouteProps) => {
-  const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
+  const { isAuthenticated, isCheckingAuth, user } = useSelector((state: RootState) => state.auth);
+
+  if (isCheckingAuth) {
+    return <div className="min-h-[80vh] flex items-center justify-center dark:text-white font-semibold">Ładowanie</div>;
+  }
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;

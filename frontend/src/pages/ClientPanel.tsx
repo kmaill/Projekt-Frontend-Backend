@@ -47,7 +47,8 @@ export const ClientPanel = () => {
       if(token == null) {
         dispatch(logout());
         //nie wiem czemu po odświerzeniu przechodzi do loginu nawet bez wylogowywania
-        //navigate('/login');
+        // dzialo sie tak bo redux nie ladowal po odswiezeniu tokenu przez chwile XD
+        navigate('/login');
       } else {
         try {
           const fetchAttempt = await fetchCompanyProfile(token);
