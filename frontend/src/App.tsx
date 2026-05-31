@@ -12,6 +12,7 @@ import {useEffect} from "react";
 import {refreshToken} from "./api/userApi.ts";
 import {login, setAuthChecked} from "./store/authSlice.ts";
 import {useDispatch} from "react-redux";
+import { OAuth2RedirectHandler } from './pages/OAuth2RedirectHandler';
 
 function App() {
   const dispatch = useDispatch();
@@ -53,6 +54,7 @@ function App() {
           <Route element={<ProtectedRoute requiredRole="ADMIN" />}>
             <Route path="admin" element={<AdminPanel />} />
           </Route>
+          <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler />} />
         </Route>
       </Routes>
     </BrowserRouter>
