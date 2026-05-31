@@ -43,7 +43,6 @@ export const ClientPanel = () => {
   useEffect(() => {
     const load = async () => {
       const token = localStorage.getItem("token");
-      //do zmiany - nie odnawia tokenu
       if(token == null) {
         dispatch(logout());
         //nie wiem czemu po odświerzeniu przechodzi do loginu nawet bez wylogowywania

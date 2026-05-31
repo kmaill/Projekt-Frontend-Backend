@@ -11,6 +11,7 @@ interface Workspace {
   type: string;
   pricePerHour: number;
   capacity: number;
+  isActive: boolean;
 }
 
 export const Offer = () => {
@@ -28,7 +29,7 @@ export const Offer = () => {
   const [hours, setHours] = useState(1);
   const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
 
-  const filteredWorkspaces = offers.filter(w => filter === 'ALL' || w.type === filter);
+  const filteredWorkspaces = offers.filter(w => w.isActive && (filter === 'ALL' || w.type === filter));
 
   const toggleAddon = (id: string) => {
     setSelectedAddons(prev => prev.includes(id) ? prev.filter(a => a !== id) : [...prev, id]);
