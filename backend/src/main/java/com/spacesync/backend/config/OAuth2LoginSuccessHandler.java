@@ -39,6 +39,8 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             newUser.setEmail(email);
             newUser.setName(name);
             newUser.setRole("USER");
+            newUser.setAuthProvider("GOOGLE");
+            newUser.setAuthProviderId(oAuth2User.getAttribute("sub"));
             userForToken = userRepository.save(newUser);
         } else {
             userForToken = existingUser.get();
