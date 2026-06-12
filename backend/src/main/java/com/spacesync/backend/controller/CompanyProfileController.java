@@ -7,6 +7,7 @@ import com.spacesync.backend.service.CompanyProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,15 +28,15 @@ public class CompanyProfileController {
 
     // CREATE
     @PostMapping
-    public ResponseEntity<CompanyProfileResponse> createCompanyProfile(@RequestHeader("Authorization") String auth,
+    public ResponseEntity<CompanyProfileResponse> createCompanyProfile(Authentication authentication,
                 @RequestBody CompanyProfileCreateRequest request) {
-        return new ResponseEntity<>(companyProfileService.createCompanyProfile(auth, request), HttpStatus.CREATED);
+        return new ResponseEntity<>(companyProfileService.createCompanyProfile(authentication, request), HttpStatus.CREATED);
     }
     
     // READ (po id)
     @GetMapping("/my")
-    public ResponseEntity<CompanyProfileResponse> getCompanyProfileById(@RequestHeader("Authorization") String auth) {
-        return new ResponseEntity<>(companyProfileService.getCompanyProfile(auth), HttpStatus.OK);
+    public ResponseEntity<CompanyProfileResponse> getCompanyProfileById(Authentication authentication) {
+        return new ResponseEntity<>(companyProfileService.getCompanyProfile(authentication), HttpStatus.OK);
     }
 
     // UPDATE

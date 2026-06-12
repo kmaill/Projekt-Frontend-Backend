@@ -50,4 +50,33 @@ public class JwtService {
                 .getPayload()
                 .get("id", Long.class);
     }
+
+    public String getEmail(String token) {
+        token = token.replace("Bearer ","");
+        return Jwts.parser()
+                .verifyWith(Keys.hmacShaKeyFor(key.getBytes()))
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getSubject();
+    }
+
+    public String getRole(String token) {
+        token = token.replace("Bearer ","");
+        return Jwts.parser()
+                .verifyWith(Keys.hmacShaKeyFor(key.getBytes()))
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get("role", String.class);
+    }
+
+    public Claims getClaims(String token) {
+        token = token.replace("Bearer ","");
+        return Jwts.parser()
+                .verifyWith(Keys.hmacShaKeyFor(key.getBytes()))
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
 }

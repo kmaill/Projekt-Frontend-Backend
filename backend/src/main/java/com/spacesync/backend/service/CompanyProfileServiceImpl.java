@@ -10,10 +10,12 @@ import com.spacesync.backend.requests.CompanyProfileUpdateRequest;
 import com.spacesync.backend.responses.CompanyProfileResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,22 +38,26 @@ public class CompanyProfileServiceImpl implements CompanyProfileService {
     }
 
     @Override
-    public CompanyProfileResponse getCompanyProfile(String token) {
-        CompanyProfile companyProfile = null;
-        if(jwtService.validateToken(token)) {
-            companyProfile = companyProfileRepository.findByUserId(jwtService.getId(token)).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"No profile found"));
-        }
+    public CompanyProfileResponse getCompanyProfile(Authentication authentication) {
+        User user = userRepository.findByEmail(authentication.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"No user found"));
+        CompanyProfile companyProfile = companyProfileRepository.findByUserId(user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"No profile found"));
+        //companyProfile = companyProfileRepository.findByUserId(jwtService.getId(token)).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"No profile found"));
 
         return mapToResponse(companyProfile);
     }
 
     @Override
-    public CompanyProfileResponse createCompanyProfile(String token, CompanyProfileCreateRequest request) {
-        CompanyProfile profile = new CompanyProfile();
-        if(!jwtService.validateToken(token)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid Token");
+    public CompanyProfileResponse createCompanyProfile(Authentication authentication, CompanyProfileCreateRequest request) {
+
+        User user = userRepository.findByEmail(authentication.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Wrong credentials"));
+        //User user = userRepository.findById(jwtService.getId(token)).orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Wrong credentials"));
+        Optional<CompanyProfile> profileOptional = companyProfileRepository.findByUserId(user.getId());
+        CompanyProfile profile;
+        if(profileOptional.isEmpty()) {
+            profile = new CompanyProfile();
+        } else {
+            profile = companyProfileRepository.findByUserId(user.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, ""));
         }
-        User user = userRepository.findById(jwtService.getId(token)).orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Wrong credentials"));
         profile.setUser(user);
         profile.setCompanyName(request.getCompanyName());
         profile.setNip(request.getNip());
