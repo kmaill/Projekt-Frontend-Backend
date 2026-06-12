@@ -2,6 +2,7 @@ package com.spacesync.backend.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -32,6 +33,12 @@ public class User {
     @Column(nullable = false)
     private String name;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private CompanyProfile companyProfile;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Reservation> reservations;
+
     public User() {}
 
     public Long getId() { return id; }
@@ -50,4 +57,8 @@ public class User {
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
+    public CompanyProfile getCompanyProfile() { return companyProfile; }
+    public void setCompanyProfile(CompanyProfile companyProfile) { this.companyProfile = companyProfile; }
+    public List<Reservation> getReservations() { return reservations; }
+    public void setReservations(List<Reservation> reservations) { this.reservations = reservations; }
 }
