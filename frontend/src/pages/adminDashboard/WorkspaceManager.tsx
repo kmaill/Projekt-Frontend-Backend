@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Edit, Trash2, Plus } from 'lucide-react';
 import { fetchWorkspaces, createWorkspace, updateWorkspace, deleteWorkspace } from '../../api/offerApi';
+import { useTranslation } from 'react-i18next';
 
 interface Workspace {
   id: number;
@@ -13,6 +14,7 @@ interface Workspace {
 }
 
 export const WorkspaceManager = () => {
+  const { t } = useTranslation();
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingWorkspace, setEditingWorkspace] = useState<Workspace | null>(null);
@@ -33,7 +35,7 @@ export const WorkspaceManager = () => {
   useEffect(() => { fetchWorkspacesData(); }, []);
 
   const handleDelete = async (id: number) => {
-    if(!confirm("Na pewno chcesz usunąć tę przestrzeń?")) return;
+    if(!confirm(t('adminPanel.workspaces.deleteConfirm'))) return;
     const token = localStorage.getItem('token');
     if(token) {
         await deleteWorkspace(token, id);
@@ -75,9 +77,9 @@ export const WorkspaceManager = () => {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 overflow-hidden">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white">Baza Przestrzeni</h2>
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t('adminPanel.workspaces.dbTitle')}</h2>
         <button onClick={() => openModal()} className="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-emerald-700 transition">
-          <Plus size={18} /> Dodaj Nową
+          <Plus size={18} /> {t('adminPanel.workspaces.addBtn')}
         </button>
       </div>
 
@@ -86,12 +88,12 @@ export const WorkspaceManager = () => {
           <thead>
             <tr className="bg-gray-50 dark:bg-gray-900/50 text-gray-500 dark:text-gray-400 text-sm">
               <th className="p-4 border-b dark:border-gray-700 rounded-tl-lg">ID</th>
-              <th className="p-4 border-b dark:border-gray-700">Nazwa</th>
-              <th className="p-4 border-b dark:border-gray-700">Typ</th>
-              <th className="p-4 border-b dark:border-gray-700">Pojemność</th>
-              <th className="p-4 border-b dark:border-gray-700">Cena /h</th>
-              <th className="p-4 border-b dark:border-gray-700">Status</th>
-              <th className="p-4 border-b dark:border-gray-700 rounded-tr-lg text-right">Akcje</th>
+              <th className="p-4 border-b dark:border-gray-700">{t('adminPanel.workspaces.table.name')}</th>
+              <th className="p-4 border-b dark:border-gray-700">{t('adminPanel.workspaces.table.type')}</th>
+              <th className="p-4 border-b dark:border-gray-700">{t('adminPanel.workspaces.table.capacity')}</th>
+              <th className="p-4 border-b dark:border-gray-700">{t('adminPanel.workspaces.table.price')}</th>
+              <th className="p-4 border-b dark:border-gray-700">{t('adminPanel.workspaces.table.status')}</th>
+              <th className="p-4 border-b dark:border-gray-700 rounded-tr-lg text-right">{t('adminPanel.workspaces.table.actions')}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
@@ -109,11 +111,11 @@ export const WorkspaceManager = () => {
                 <td className="p-4">
                   {w.isActive ? (
                     <span className="px-2 py-1 text-xs font-bold rounded-full bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300">
-                      Aktywna
+                      {t('adminPanel.workspaces.active')}
                     </span>
                   ) : (
                     <span className="px-2 py-1 text-xs font-bold rounded-full bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300">
-                      Nieaktywna
+                      {t('adminPanel.workspaces.inactive')}
                     </span>
                   )}
                 </td>
@@ -135,37 +137,37 @@ export const WorkspaceManager = () => {
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm">
           <div className="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-md p-6 shadow-2xl relative border border-gray-200 dark:border-gray-700">
             <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
-              {editingWorkspace ? 'Edytuj Przestrzeń' : 'Nowa Przestrzeń'}
+              {editingWorkspace ? t('adminPanel.workspaces.modal.editTitle') : t('adminPanel.workspaces.modal.newTitle')}
             </h2>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Nazwa</label>
+                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">{t('adminPanel.workspaces.modal.name')}</label>
                 <input {...register('name', { required: true })} className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500" />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Typ</label>
+                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">{t('adminPanel.workspaces.modal.type')}</label>
                 <select {...register('type')} className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500">
-                  <option value="DESK">Biurko (DESK)</option>
-                  <option value="CONFERENCE_ROOM">Sala (CONFERENCE_ROOM)</option>
+                  <option value="DESK">DESK</option>
+                  <option value="CONFERENCE_ROOM">CONFERENCE_ROOM</option>
                 </select>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Pojemność (os.)</label>
+                  <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">{t('adminPanel.workspaces.modal.capacity')}</label>
                   <input type="number" {...register('capacity', { required: true, valueAsNumber: true })} min="1" className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Cena /h (PLN)</label>
+                  <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">{t('adminPanel.workspaces.modal.price')}</label>
                   <input type="number" step="0.01" {...register('pricePerHour', { required: true, valueAsNumber: true })} min="0" className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500" />
                 </div>
               </div>
               <div className="flex items-center gap-2 mt-2">
                 <input type="checkbox" id="isActive" {...register('isActive')} className="w-4 h-4 text-emerald-600 bg-gray-100 border-gray-300 rounded focus:ring-emerald-500" />
-                <label htmlFor="isActive" className="text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer">Aktywna</label>
+                <label htmlFor="isActive" className="text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer">{t('adminPanel.workspaces.modal.isActive')}</label>
               </div>
               <div className="flex justify-end gap-3 mt-8">
-                <button type="button" onClick={() => setIsModalOpen(false)} className="px-5 py-2 rounded-lg font-medium bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition">Anuluj</button>
-                <button type="submit" className="px-5 py-2 rounded-lg font-bold bg-emerald-600 text-white hover:bg-emerald-700 transition shadow-lg hover:shadow-xl">Zapisz</button>
+                <button type="button" onClick={() => setIsModalOpen(false)} className="px-5 py-2 rounded-lg font-medium bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition">{t('adminPanel.workspaces.modal.cancel')}</button>
+                <button type="submit" className="px-5 py-2 rounded-lg font-bold bg-emerald-600 text-white hover:bg-emerald-700 transition shadow-lg hover:shadow-xl">{t('adminPanel.workspaces.modal.save')}</button>
               </div>
             </form>
           </div>

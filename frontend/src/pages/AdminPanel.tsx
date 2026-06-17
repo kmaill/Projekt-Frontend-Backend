@@ -3,8 +3,10 @@ import { ArrowLeft, Users, LayoutDashboard, Building2 } from 'lucide-react';
 import { WorkspaceManager } from './adminDashboard/WorkspaceManager';
 import { UserManager } from './adminDashboard/UserManager';
 import { AddonManager } from './adminDashboard/AddonManager';
+import { useTranslation } from 'react-i18next';
 
 export const AdminPanel = () => {
+  const { t } = useTranslation();
   const [view, setView] = useState<'DASHBOARD' | 'WORKSPACES' | 'USERS' | 'ADDONS'>('DASHBOARD');
 
   return (
@@ -20,15 +22,15 @@ export const AdminPanel = () => {
         )}
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
           <LayoutDashboard size={32} className="text-emerald-600" />
-          Panel Administratora
+          {t('adminPanel.dashboard.title')}
         </h1>
       </div>
 
       {view === 'DASHBOARD' && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col transition-colors duration-200">
-            <h3 className="text-xl font-bold mb-2 flex items-center gap-2"><Building2 size={20} className="text-emerald-600"/> Płatności Offline</h3>
-            <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">Zatwierdzaj wpłaty od klientów korporacyjnych.</p>
+            <h3 className="text-xl font-bold mb-2 flex items-center gap-2"><Building2 size={20} className="text-emerald-600"/> {t('adminPanel.dashboard.offlinePayments.title')}</h3>
+            <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">{t('adminPanel.dashboard.offlinePayments.desc')}</p>
             <div className="mt-auto space-y-3">
               <div className="bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800/50 p-3 rounded-md flex justify-between items-center transition-colors">
                 <div>
@@ -43,35 +45,35 @@ export const AdminPanel = () => {
           </div>
 
           <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col transition-colors duration-200">
-            <h3 className="text-xl font-bold mb-2 flex items-center gap-2"><Building2 size={20} className="text-emerald-600"/> Zarządzanie Przestrzeniami</h3>
-            <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">Dodawaj nowe biurka, edytuj ceny i usuwaj przestrzenie.</p>
+            <h3 className="text-xl font-bold mb-2 flex items-center gap-2"><Building2 size={20} className="text-emerald-600"/> {t('adminPanel.dashboard.workspaces.title')}</h3>
+            <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">{t('adminPanel.dashboard.workspaces.desc')}</p>
             <button 
               onClick={() => setView('WORKSPACES')}
               className="mt-auto bg-emerald-600 text-white py-2 rounded-lg font-medium hover:bg-emerald-700 transition-colors"
             >
-              Przejdź do edytora
+              {t('adminPanel.dashboard.workspaces.btn')}
             </button>
           </div>
 
           <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col transition-colors duration-200">
-            <h3 className="text-xl font-bold mb-2 flex items-center gap-2"><Building2 size={20} className="text-emerald-600"/> Zarządzanie Dodatkami</h3>
-            <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">Dodawaj nowe dodatki, edytuj ceny i usuwaj.</p>
+            <h3 className="text-xl font-bold mb-2 flex items-center gap-2"><Building2 size={20} className="text-emerald-600"/> {t('adminPanel.dashboard.addons.title')}</h3>
+            <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">{t('adminPanel.dashboard.addons.desc')}</p>
             <button 
               onClick={() => setView('ADDONS')}
               className="mt-auto bg-emerald-600 text-white py-2 rounded-lg font-medium hover:bg-emerald-700 transition-colors"
             >
-              Przejdź do edytora
+              {t('adminPanel.dashboard.addons.btn')}
             </button>
           </div>
 
           <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col transition-colors duration-200">
-            <h3 className="text-xl font-bold mb-2 flex items-center gap-2"><Users size={20} className="text-emerald-600"/> Zarządzanie Użytkownikami</h3>
-            <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">Przeglądaj konta, przypisuj role ADMIN/USER i zarządzaj bazą klientów.</p>
+            <h3 className="text-xl font-bold mb-2 flex items-center gap-2"><Users size={20} className="text-emerald-600"/> {t('adminPanel.dashboard.users.title')}</h3>
+            <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">{t('adminPanel.dashboard.users.desc')}</p>
             <button 
               onClick={() => setView('USERS')}
               className="mt-auto bg-gray-800 dark:bg-gray-700 text-white py-2 rounded-lg font-medium hover:bg-gray-900 dark:hover:bg-gray-600 transition-colors"
             >
-              Lista użytkowników
+              {t('adminPanel.dashboard.users.btn')}
             </button>
           </div>
         </div>

@@ -1,6 +1,7 @@
 import { getAllUsers, updateUserRole, deleteUser } from '../../api/userApi';
 import { useState, useEffect } from 'react';
 import { Trash2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface User {
   id: number;
@@ -11,6 +12,7 @@ interface User {
 }
 
 export const UserManager = () => {
+  const { t } = useTranslation();
   const [users, setUsers] = useState<User[]>([]);
 
   const fetchUsersData = async () => {
@@ -36,7 +38,7 @@ export const UserManager = () => {
   };
 
   const handleDeleteUser = async (id: number) => {
-    if(!confirm("Na pewno usunąć użytkownika?")) return;
+    if(!confirm(t('adminPanel.users.deleteConfirm'))) return;
     const token = localStorage.getItem('token');
     if(token) {
       await deleteUser(token, id);
@@ -46,18 +48,18 @@ export const UserManager = () => {
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 overflow-hidden">
-      <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Baza Użytkowników</h2>
+      <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">{t('adminPanel.users.dbTitle')}</h2>
 
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-gray-50 dark:bg-gray-900/50 text-gray-500 dark:text-gray-400 text-sm">
               <th className="p-4 border-b dark:border-gray-700 rounded-tl-lg">ID</th>
-              <th className="p-4 border-b dark:border-gray-700">Imię / Nazwa</th>
-              <th className="p-4 border-b dark:border-gray-700">Email</th>
-              <th className="p-4 border-b dark:border-gray-700">Data Rejestracji</th>
-              <th className="p-4 border-b dark:border-gray-700">Rola</th>
-              <th className="p-4 border-b dark:border-gray-700 rounded-tr-lg text-right">Akcje</th>
+              <th className="p-4 border-b dark:border-gray-700">{t('adminPanel.users.table.name')}</th>
+              <th className="p-4 border-b dark:border-gray-700">{t('adminPanel.users.table.email')}</th>
+              <th className="p-4 border-b dark:border-gray-700">{t('adminPanel.users.table.regDate')}</th>
+              <th className="p-4 border-b dark:border-gray-700">{t('adminPanel.users.table.role')}</th>
+              <th className="p-4 border-b dark:border-gray-700 rounded-tr-lg text-right">{t('adminPanel.users.table.actions')}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
@@ -86,7 +88,7 @@ export const UserManager = () => {
             ))}
             {users.length === 0 && (
               <tr>
-                <td colSpan={6} className="p-8 text-center text-gray-500 dark:text-gray-400">Brak danych / Ładowanie...</td>
+                <td colSpan={6} className="p-8 text-center text-gray-500 dark:text-gray-400">{t('adminPanel.users.noData')}</td>
               </tr>
             )}
           </tbody>

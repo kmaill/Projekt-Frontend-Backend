@@ -1,9 +1,11 @@
 import { Mail, Lock, User as UserIcon } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import {useState} from "react";
+import { useTranslation } from 'react-i18next';
 import {register} from "../api/userApi.ts";
 
 export const Register = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const [name, setName] = useState('');
@@ -18,7 +20,7 @@ export const Register = () => {
       navigate('/login');
     }
     catch (error) {
-      setMessage("Istnieje już konto z takim emailem");
+      setMessage(t('registerPage.emailExists'));
     }
   };
 
@@ -26,14 +28,14 @@ export const Register = () => {
     <div className="min-h-[80vh] flex items-center justify-center p-4 dark:text-gray-100 transition-colors duration-200">
       <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100 dark:border-gray-700 transition-colors duration-200">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Dołącz do nas</h2>
-          <p className="text-gray-500 dark:text-gray-400">Załóż konto i zyskaj dostęp do przestrzeni</p>
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">{t('registerPage.joinUs')}</h2>
+          <p className="text-gray-500 dark:text-gray-400">{t('registerPage.createAccount')}</p>
         </div>
 
         <form className="space-y-5" onSubmit={handleRegister}>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Imię i nazwisko</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('registerPage.fullNameLabel')}</label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <UserIcon size={18} className="text-gray-400" />
@@ -42,14 +44,14 @@ export const Register = () => {
                 type="text" 
                 required
                 className="block w-full pl-10 pr-3 py-2.5 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-600 focus:border-transparent outline-none transition-all dark:text-white" 
-                placeholder="Jan Kowalski"
+                placeholder={t('registerPage.fullNamePlaceholder')}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Adres e-mail</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('registerPage.emailLabel')}</label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Mail size={18} className="text-gray-400" />
@@ -58,14 +60,14 @@ export const Register = () => {
                 type="email" 
                 required
                 className="block w-full pl-10 pr-3 py-2.5 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-600 focus:border-transparent outline-none transition-all dark:text-white" 
-                placeholder="twoj@email.com"
+                placeholder={t('registerPage.emailPlaceholder')}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Hasło</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('registerPage.passwordLabel')}</label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Lock size={18} className="text-gray-400" />
@@ -75,7 +77,7 @@ export const Register = () => {
                 required
                 minLength={8}
                 className="block w-full pl-10 pr-3 py-2.5 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-600 focus:border-transparent outline-none transition-all dark:text-white" 
-                placeholder="••••••••"
+                placeholder={t('registerPage.passwordPlaceholder')}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
               />
             </div>
@@ -89,13 +91,13 @@ export const Register = () => {
             type="submit" 
             className="w-full bg-emerald-600 text-white font-bold py-3 rounded-lg hover:bg-emerald-700 transition-colors shadow-md hover:shadow-lg mt-2"
           >
-            Utwórz konto
+            {t('registerPage.createAccountBtn')}
           </button>
         </form>
 
         <div className="mt-6 flex items-center">
           <div className="flex-grow border-t border-gray-300 dark:border-gray-600"></div>
-          <span className="px-3 text-sm text-gray-500 dark:text-gray-400">lub zaloguj przez</span>
+          <span className="px-3 text-sm text-gray-500 dark:text-gray-400">{t('registerPage.orRegisterWith')}</span>
           <div className="flex-grow border-t border-gray-300 dark:border-gray-600"></div>
         </div>
 
@@ -121,7 +123,7 @@ export const Register = () => {
         </div>
         
         <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-8">
-          Masz już konto? <Link to="/login" className="text-emerald-600 dark:text-emerald-400 font-semibold hover:underline">Zaloguj się</Link>
+          {t('registerPage.haveAccount')} <Link to="/login" className="text-emerald-600 dark:text-emerald-400 font-semibold hover:underline">{t('registerPage.loginLink')}</Link>
         </p>
       </div>
     </div>
