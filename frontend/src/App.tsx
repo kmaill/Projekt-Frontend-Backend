@@ -13,6 +13,8 @@ import {refreshToken} from "./api/userApi.ts";
 import {login, setAuthChecked} from "./store/authSlice.ts";
 import {useDispatch} from "react-redux";
 import { OAuth2RedirectHandler } from './pages/OAuth2RedirectHandler';
+import { PaymentSuccess } from './pages/PaymentSuccess';
+import { PaymentFailed } from './pages/PaymentFailed';
 
 function App() {
   const dispatch = useDispatch();
@@ -48,17 +50,21 @@ function App() {
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
           <Route path="checkout" element={<Checkout />} />
-          <Route element={<ProtectedRoute />}>
-            <Route path="client" element={<ClientPanel />} />
+          <Route path="payment/success" element={<PaymentSuccess />} />
+          <Route path="payment/failed" element={<PaymentFailed />} />
+      
+         <Route element={<ProtectedRoute />}>
+           <Route path="client" element={<ClientPanel />} />
           </Route>
           <Route element={<ProtectedRoute requiredRole="ADMIN" />}>
             <Route path="admin" element={<AdminPanel />} />
           </Route>
-          <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler />} />
-        </Route>
+       </Route>
+
+       <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler />} />
       </Routes>
     </BrowserRouter>
-  );
+      );
 }
 
 export default App;

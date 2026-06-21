@@ -1,13 +1,79 @@
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../store/store';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { removeItem } from '../store/cartSlice';
+import { removeItem, clearCart } from '../store/cartSlice';
+import { createReservationRequest, addAddonToReservationRequest, createPaymentRequest, createStripeSession } from '../api/reservationApi';
 
 export const Checkout = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  
   const { items, total } = useSelector((state: RootState) => state.cart);
+  const { user, isAuthenticated } = useSelector((state: RootState) => state.auth);
+
+  const handleCheckout = async (method: 'ONLINE' | 'OFFLINE') => {
+    const token = localStorage.getItem('token');
+    if (!isAuthenticated || !user || !token) {
+      alert("Musisz być zalogowany, aby dokonać rezerwacji!");
+      navigate('/login');
+      return;
+    }
+
+    try {
+      for (const item of items) {
+        const startDateTime = `${item.date}T${item.startTime}:00`;
+        const [hoursPart, minutesPart] = item.startTime.split(':').map(Number);
+        const endHour = hoursPart + item.hours;
+        const formattedEndHour = endHour < 10 ? `0${endHour}` : `${endHour}`;
+        const endDateTime = `${item.date}T${formattedEndHour}:${minutesPart < 10 ? '0' : ''}${minutesPart}:00`;
+
+        const reservation = await createReservationRequest(token, {
+          workspaceId: item.workspaceId,
+          startTime: startDateTime,
+          endTime: endDateTime,
+          userId: user.id
+        });
+
+        for (const addon of item.addons) {
+          await addAddonToReservationRequest(token, {
+            reservationId: reservation.id,
+            addonId: Number(addon.id),
+            quantity: 1
+          });
+        }
+        const itemTotalAmount = item.pricePerHour * item.hours + item.addons.reduce((acc, a) => acc + (a.billingType === 'PER_HOUR' ? a.price * item.hours : a.price), 0);
+
+        await createPaymentRequest(token, {
+          reservationId: reservation.id,
+          amount: itemTotalAmount,
+          paymentMethod: method
+        });
+
+        if (method === 'ONLINE') {
+          const { url } = await createStripeSession(token, {
+            reservationId: reservation.id,
+            amount: itemTotalAmount,
+            paymentMethod: 'ONLINE'
+          });
+          
+          dispatch(clearCart());
+          window.location.href = url;
+          return;
+        }
+      }
+
+      if (method === 'OFFLINE') {
+        alert("Rezerwacja z płatnością tradycyjnym przelewem została pomyślnie złożona!");
+        dispatch(clearCart());
+        navigate('/client-panel');
+      }
+
+    } catch (error: any) {
+      alert(error.message || "Wystąpił błąd podczas składania rezerwacji.");
+    }
+  };
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-10 w-full dark:text-gray-100 transition-colors">
@@ -28,7 +94,7 @@ export const Checkout = () => {
                     <strong>{t('checkout.addons')}</strong>
                     <ul className="list-disc pl-4 mt-1">
                       {item.addons.map(addon => (
-                        <li key={addon.id}>{addon.name} (+{addon.price} PLN{addon.billing_type === 'PER_HOUR' ? '/h' : ''})</li>
+                        <li key={addon.id}>{addon.name} (+{addon.price} PLN{(addon as any).billingType === 'PER_HOUR' || addon.billing_type === 'PER_HOUR' ? '/h' : ''})</li>
                       ))}
                     </ul>
                   </div>
@@ -37,7 +103,7 @@ export const Checkout = () => {
               <div className="text-right flex items-center sm:block gap-4">
                 <div>
                   <p className="font-bold text-lg whitespace-nowrap">
-                    {item.pricePerHour * item.hours + item.addons.reduce((acc, a) => acc + (a.billing_type === 'PER_HOUR' ? a.price * item.hours : a.price), 0)} PLN
+                    {item.pricePerHour * item.hours + item.addons.reduce((acc, a) => acc + ((a as any).billingType === 'PER_HOUR' || a.billing_type === 'PER_HOUR' ? a.price * item.hours : a.price), 0)} PLN
                   </p>
                 </div>
                 <button 
@@ -66,11 +132,19 @@ export const Checkout = () => {
           <div className="space-y-3">
             <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('checkout.paymentMethod')}</p>
             
-            <button disabled={items.length === 0} className="w-full bg-[#005c8a] disabled:opacity-50 text-white py-3 rounded-lg font-medium hover:bg-[#004b70] transition-colors flex justify-center items-center gap-2">
+            <button 
+              onClick={() => handleCheckout('ONLINE')}
+              disabled={items.length === 0} 
+              className="w-full bg-[#005c8a] disabled:opacity-50 text-white py-3 rounded-lg font-medium hover:bg-[#004b70] transition-colors flex justify-center items-center gap-2"
+            >
               {t('checkout.onlinePayment')}
             </button>
             
-            <button disabled={items.length === 0} className="w-full bg-white dark:bg-gray-700 disabled:opacity-50 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-white py-3 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors flex justify-center items-center gap-2">
+            <button 
+              onClick={() => handleCheckout('OFFLINE')}
+              disabled={items.length === 0} 
+              className="w-full bg-white dark:bg-gray-700 disabled:opacity-50 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-white py-3 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors flex justify-center items-center gap-2"
+            >
               {t('checkout.bankTransfer')}
             </button>
           </div>
