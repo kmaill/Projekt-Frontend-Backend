@@ -3,6 +3,8 @@ package com.spacesync.backend.model;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "reservations")
@@ -35,6 +37,12 @@ public class Reservation {
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    @OneToOne(mappedBy = "reservation", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private Payment payment;
+
+    @OneToMany(mappedBy = "reservation", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<ReservationAddon> addons = new ArrayList<>();
+
     public Reservation() {}
 
     public Long getId() { return id; }
@@ -53,4 +61,8 @@ public class Reservation {
     public void setStatus(String status) { this.status = status; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public Payment getPayment() { return payment; }
+    public void setPayment(Payment payment) { this.payment = payment; }
+    public List<ReservationAddon> getAddons() { return addons; }
+    public void setAddons(List<ReservationAddon> addons) { this.addons = addons; }
 }
