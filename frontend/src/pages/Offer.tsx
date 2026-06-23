@@ -4,6 +4,8 @@ import { useDispatch } from 'react-redux';
 import { addItem } from '../store/cartSlice';
 import type { Addon } from '../store/cartSlice';
 import { fetchWorkspaces, fetchAddons } from '../api/offerApi';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 interface Workspace {
   id: number;
@@ -24,7 +26,7 @@ export const Offer = () => {
   const [filter, setFilter] = useState('ALL');
   const [selectedSpace, setSelectedSpace] = useState<Workspace | null>(null);
   
-  const [date, setDate] = useState('');
+  const [date, setDate] = useState<Date | null>(null);
   const [startTime, setStartTime] = useState('09:00');
   const [hours, setHours] = useState(1);
   const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
@@ -36,23 +38,25 @@ export const Offer = () => {
   };
 
   const handleAddToCart = () => {
-    if (!selectedSpace || !date || (Date.parse(date) <= Date.now())) return;
+    if (!selectedSpace || !date || (date.getTime() <= Date.now() - 86400000)) return;
 
     const addonsToAdd = addons.filter(a => selectedAddons.includes(a.id));
+
+    const localDateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 
     dispatch(addItem({
       id: Date.now().toString(),
       workspaceId: selectedSpace.id,
       name: selectedSpace.name,
       pricePerHour: selectedSpace.pricePerHour,
-      date,
+      date: localDateStr,
       startTime,
       hours,
       addons: addonsToAdd
     }));
 
     setSelectedSpace(null);
-    setDate('');
+    setDate(null);
     setHours(1);
     setSelectedAddons([]);
   };
@@ -119,9 +123,17 @@ export const Offer = () => {
             
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
-                <div>
+                <div className="relative">
                   <label className="block text-sm font-medium mb-1">{t('booking.date')}</label>
-                  <input type="date" value={date} onChange={e => setDate(e.target.value)} className="w-full px-3 py-2 border dark:border-gray-600 dark:bg-gray-700 rounded-lg outline-none" required />
+                  <DatePicker 
+                    selected={date} 
+                    onChange={(d: Date | null) => setDate(d)} 
+                    minDate={new Date()}
+                    dateFormat="yyyy-MM-dd"
+                    placeholderText="YYYY-MM-DD"
+                    className="w-full px-3 py-2 border dark:border-gray-600 dark:bg-gray-700 rounded-lg outline-none" 
+                    required 
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">{t('booking.startTime')}</label>

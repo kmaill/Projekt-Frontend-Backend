@@ -71,3 +71,20 @@ export const approveOfflinePayment = async (token: string, paymentId: number, ad
     if (!res.ok) throw new Error("Błąd akceptacji płatności");
     return await res.json();
 };
+
+export const getAllReservations = async (token: string) => {
+    const res = await fetch('http://localhost:8080/api/reservations', {
+        method: "GET",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+    });
+    if (!res.ok) throw new Error("Błąd pobierania rezerwacji");
+    return await res.json();
+};
+
+export const deleteReservation = async (token: string, id: number) => {
+    const res = await fetch(`http://localhost:8080/api/reservations/${id}`, {
+        method: "DELETE",
+        headers: { "Authorization": `Bearer ${token}` },
+    });
+    if (!res.ok) throw new Error("Błąd usuwania rezerwacji");
+};

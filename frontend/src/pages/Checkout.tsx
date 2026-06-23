@@ -67,7 +67,7 @@ export const Checkout = () => {
       if (method === 'OFFLINE') {
         alert("Rezerwacja z płatnością tradycyjnym przelewem została pomyślnie złożona!");
         dispatch(clearCart());
-        navigate('/client-panel');
+        navigate('/client');
       }
 
     } catch (error: any) {

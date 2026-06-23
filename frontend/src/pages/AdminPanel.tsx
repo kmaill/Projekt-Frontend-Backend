@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Users, LayoutDashboard, Building2 } from 'lucide-react';
+import { ArrowLeft, Users, LayoutDashboard, Building2, Calendar } from 'lucide-react';
 import { WorkspaceManager } from './adminDashboard/WorkspaceManager';
 import { UserManager } from './adminDashboard/UserManager';
 import { AddonManager } from './adminDashboard/AddonManager';
+import { ReservationManager } from './adminDashboard/ReservationManager';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../store/store';
@@ -10,7 +11,7 @@ import { approveOfflinePayment } from '../api/reservationApi';
 
 export const AdminPanel = () => {
   const { t } = useTranslation();
-  const [view, setView] = useState<'DASHBOARD' | 'WORKSPACES' | 'USERS' | 'ADDONS'>('DASHBOARD');
+  const [view, setView] = useState<'DASHBOARD' | 'WORKSPACES' | 'USERS' | 'ADDONS' | 'RESERVATIONS'>('DASHBOARD');
   
   const { user } = useSelector((state: RootState) => state.auth);
   const [pendingPayments, setPendingPayments] = useState<any[]>([]);
@@ -117,9 +118,20 @@ export const AdminPanel = () => {
             <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">{t('adminPanel.dashboard.users.desc')}</p>
             <button 
               onClick={() => setView('USERS')}
-              className="mt-auto bg-gray-800 dark:bg-gray-700 text-white py-2 rounded-lg font-medium hover:bg-gray-900 dark:hover:bg-gray-600 transition-colors"
+              className="mt-auto bg-emerald-600 text-white py-2 rounded-lg font-medium hover:bg-emerald-700 transition-colors"
             >
               {t('adminPanel.dashboard.users.btn')}
+            </button>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col transition-colors duration-200">
+            <h3 className="text-xl font-bold mb-2 flex items-center gap-2"><Calendar size={20} className="text-emerald-600"/> {t('adminPanel.dashboard.reservations.title')}</h3>
+            <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">{t('adminPanel.dashboard.reservations.desc')}</p>
+            <button 
+              onClick={() => setView('RESERVATIONS')}
+              className="mt-auto bg-emerald-600 text-white py-2 rounded-lg font-medium hover:bg-emerald-700 transition-colors"
+            >
+              {t('adminPanel.dashboard.reservations.btn')}
             </button>
           </div>
         </div>
@@ -128,6 +140,7 @@ export const AdminPanel = () => {
       {view === 'WORKSPACES' && <WorkspaceManager />}
       {view === 'USERS' && <UserManager />}
       {view === 'ADDONS' && <AddonManager />}
+      {view === 'RESERVATIONS' && <ReservationManager />}
     </div>
   );
 };

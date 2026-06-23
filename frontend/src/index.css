@@ -1,3 +1,37 @@
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
+
+.dark .react-datepicker {
+  background-color: #1f2937;
+  border-color: #374151;
+  font-family: inherit;
+}
+.dark .react-datepicker__header {
+  background-color: #111827;
+  border-bottom-color: #374151;
+}
+.dark .react-datepicker__current-month,
+.dark .react-datepicker__day-name {
+  color: #f9fafb;
+}
+.dark .react-datepicker__day {
+  color: #d1d5db;
+}
+.dark .react-datepicker__day:hover {
+  background-color: #374151;
+}
+.dark .react-datepicker__day--selected,
+.dark .react-datepicker__day--keyboard-selected {
+  background-color: #059669;
+  color: #ffffff;
+}
+.dark .react-datepicker__day--disabled {
+  color: #4b5563;
+}
+.dark .react-datepicker__day--disabled:hover {
+  background-color: transparent;
+}
+.dark .react-datepicker__triangle {
+  display: none;
+}

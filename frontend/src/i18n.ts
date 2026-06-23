@@ -116,6 +116,11 @@ const resources = {
             "title": "User Management",
             "desc": "Browse accounts, assign ADMIN/USER roles and manage the client base.",
             "btn": "User list"
+          },
+          "reservations": {
+            "title": "Reservation Management",
+            "desc": "View, manage and delete reservations in the system.",
+            "btn": "Reservation list"
           }
         },
         "workspaces": {
@@ -157,6 +162,18 @@ const resources = {
             "actions": "Actions"
           },
           "noData": "No data / Loading..."
+        },
+        "reservations": {
+          "deleteConfirm": "Are you sure you want to delete this reservation?",
+          "dbTitle": "Reservation Database",
+          "table": {
+            "workspace": "Workspace",
+            "user": "User",
+            "start": "Start",
+            "end": "End",
+            "status": "Status",
+            "actions": "Actions"
+          }
         },
         "addons": {
           "deleteConfirm": "Are you sure you want to delete this add-on?",
@@ -312,6 +329,11 @@ const resources = {
             "title": "Zarządzanie Użytkownikami",
             "desc": "Przeglądaj konta, przypisuj role ADMIN/USER i zarządzaj bazą klientów.",
             "btn": "Lista użytkowników"
+          },
+          "reservations": {
+            "title": "Zarządzanie Rezerwacjami",
+            "desc": "Przeglądaj, zarządzaj i usuwaj rezerwacje w systemie.",
+            "btn": "Lista rezerwacji"
           }
         },
         "workspaces": {
@@ -353,6 +375,18 @@ const resources = {
             "actions": "Akcje"
           },
           "noData": "Brak danych / Ładowanie..."
+        },
+        "reservations": {
+          "deleteConfirm": "Na pewno chcesz usunąć tę rezerwację?",
+          "dbTitle": "Baza Rezerwacji",
+          "table": {
+            "workspace": "Przestrzeń",
+            "user": "Użytkownik",
+            "start": "Od",
+            "end": "Do",
+            "status": "Status",
+            "actions": "Akcje"
+          }
         },
         "addons": {
           "deleteConfirm": "Na pewno chcesz usunąć ten dodatek?",
