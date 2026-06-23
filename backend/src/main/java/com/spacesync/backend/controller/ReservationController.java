@@ -62,4 +62,10 @@ public class ReservationController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end) {
         return ResponseEntity.ok(reservationService.isAvailable(workspaceId, start, end));
     }
+
+    @PostMapping("/confirm/{id}")
+    public ResponseEntity<Void> confirmPayment(@PathVariable Long id) {
+        reservationService.confirmReservation(id);
+        return ResponseEntity.ok().build();
+    }
 }

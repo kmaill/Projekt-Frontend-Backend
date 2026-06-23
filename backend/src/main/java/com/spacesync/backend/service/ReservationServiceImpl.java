@@ -115,6 +115,15 @@ public class ReservationServiceImpl implements ReservationService {
         Reservation reservation = reservationRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No reservation of id: " + id));
         reservationRepository.delete(reservation);
     }
+    
+    @Override
+    public void confirmReservation(Long id) {
+        Reservation reservation = reservationRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Reservation not found"));
+        
+        reservation.setStatus("CONFIRMED");
+        reservationRepository.save(reservation);
+    }
 
     private ReservationResponse mapToResponse(Reservation reservation) {
         ReservationResponse response = new ReservationResponse();

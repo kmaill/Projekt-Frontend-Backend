@@ -17,4 +17,5 @@ public interface ReservationService {
     void deleteReservation(Long id);
     boolean isAvailable(Long workspaceId, LocalDateTime start, LocalDateTime end);
     void priceIncludingAddons(Reservation reservation, Addon addon, Integer quantity);
+    void confirmReservation(Long id);
 }
