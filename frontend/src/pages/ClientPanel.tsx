@@ -1,13 +1,16 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {z} from 'zod';
+import { z } from 'zod';
 import * as React from "react";
-import {useEffect} from "react";
-import {createCompanyProfile, fetchCompanyProfile} from "../api/companyProfileApi.ts";
-import {useNavigate} from "react-router-dom";
-import {logout} from "../store/authSlice.ts";
-import {useDispatch} from "react-redux";
+import { useEffect, useState } from "react";
+import { createCompanyProfile, fetchCompanyProfile } from "../api/companyProfileApi.ts";
+import { useNavigate } from "react-router-dom";
+import { logout } from "../store/authSlice.ts";
+import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
+import { getAllReservations } from '../api/reservationApi';
+import { fetchWorkspaces } from '../api/offerApi';
+import type { RootState } from '../store/store';
 
 const getInvoiceSchema = (t: any) => z.object({
   companyName: z.string().min(3, t('clientPanel.errors.companyName')),
@@ -41,16 +44,19 @@ export const ClientPanel = () => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [editCheck, setEditCheck] = React.useState(false);
-  const [currentInvoice, setCurrentInvoice] = React.useState<InvoicePayload | null>(null);
+  const { user } = useSelector((state: RootState) => state.auth);
+
+  const [editCheck, setEditCheck] = useState(false);
+  const [currentInvoice, setCurrentInvoice] = useState<InvoicePayload | null>(null);
+  
+  const [reservations, setReservations] = useState<any[]>([]);
+  const [workspaces, setWorkspaces] = useState<any[]>([]);
 
   useEffect(() => {
     const load = async () => {
       const token = localStorage.getItem("token");
-      if(token == null) {
+      if (token == null) {
         dispatch(logout());
-        //nie wiem czemu po odświerzeniu przechodzi do loginu nawet bez wylogowywania
-        // dzialo sie tak bo redux nie ladowal po odswiezeniu tokenu przez chwile XD
         navigate('/login');
       } else {
         try {
@@ -61,20 +67,19 @@ export const ClientPanel = () => {
             address: fetchAttempt.address,
             contactEmail: fetchAttempt.contactEmail,
           });
-          console.log(currentInvoice);
         } catch (error) {
           setEditCheck(true);
         }
       }
     }
     load();
-  }, []);
+  }, [dispatch, navigate]);
 
   useEffect(() => {
-    if(!editCheck) {
+    if (!editCheck) {
       const load = async () => {
         const token = localStorage.getItem("token");
-        if(token == null) {
+        if (token == null) {
           dispatch(logout());
           navigate('/login');
         } else {
@@ -87,17 +92,35 @@ export const ClientPanel = () => {
               contactEmail: fetchAttempt.contactEmail,
             });
           } catch (error) {
-            console.log("Error temp message");
           }
         }
       }
       load();
     }
-  }, [editCheck]);
+  }, [editCheck, dispatch, navigate]);
+
+  useEffect(() => {
+    const fetchResData = async () => {
+      const token = localStorage.getItem('token');
+      if (token && user?.id) {
+        try {
+          const [resData, wsData] = await Promise.all([
+            getAllReservations(token),
+            fetchWorkspaces()
+          ]);
+          const myReservations = resData.filter((r: any) => r.userId === user.id);
+          setReservations(myReservations);
+          setWorkspaces(wsData);
+        } catch (e) {
+        }
+      }
+    };
+    fetchResData();
+  }, [user]);
 
   const onSubmit = async (data: InvoiceFormValues) => {
     const token = localStorage.getItem('token');
-    if(token == null) {
+    if (token == null) {
       dispatch(logout());
       navigate('/login');
     } else {
@@ -108,7 +131,6 @@ export const ClientPanel = () => {
         contactEmail: data.email
       };
 
-      console.log('Payload: ', payloadForBackend);
       await createCompanyProfile(token, payloadForBackend);
       setEditCheck(false);
     }
@@ -121,27 +143,30 @@ export const ClientPanel = () => {
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 border-b dark:border-gray-700 pb-2">{t('clientPanel.myReservations')}</h2>
         <div className="space-y-4">
           
-          <div className="bg-white dark:bg-gray-800 p-5 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
-            <div className="flex justify-between items-start mb-2">
-              <h3 className="font-bold text-lg">Biurko Open Space A1</h3>
-              <span className="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300 text-xs px-2 py-1 rounded-full font-semibold">
-                Zatwierdzona
-              </span>
-            </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Data: 18.05.2026</p>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Godziny: 09:00 - 17:00 (8h)</p>
-          </div>
-
-          <div className="bg-white dark:bg-gray-800 p-5 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
-            <div className="flex justify-between items-start mb-2">
-              <h3 className="font-bold text-lg">Sala Konferencyjna Mała</h3>
-              <span className="bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-400 text-xs px-2 py-1 rounded-full font-semibold">
-                Oczekuje na płatność
-              </span>
-            </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Data: 20.05.2026</p>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Godziny: 10:00 - 12:00 (2h)</p>
-          </div>
+          {reservations.length > 0 ? reservations.map(r => {
+            const ws = workspaces.find(w => w.id === r.workspaceId);
+            return (
+              <div key={r.id} className="bg-white dark:bg-gray-800 p-5 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="font-bold text-lg">{ws ? ws.name : `ID Przestrzeni: ${r.workspaceId}`}</h3>
+                  <span className={`text-xs px-2 py-1 rounded-full font-semibold ${r.status === 'CONFIRMED' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300' : r.status === 'CANCELLED' ? 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300' : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300'}`}>
+                    {r.status}
+                  </span>
+                </div>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                  Początek: {new Date(r.startTime).toLocaleString()}
+                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Koniec: {new Date(r.endTime).toLocaleString()}
+                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 font-bold mt-2">
+                  Koszt: {r.totalPrice} PLN
+                </p>
+              </div>
+            )
+          }) : (
+            <p className="text-gray-500 dark:text-gray-400">Brak przypisanych rezerwacji.</p>
+          )}
 
         </div>
       </div>
