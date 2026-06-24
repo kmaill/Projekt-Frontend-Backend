@@ -20,7 +20,7 @@ export const createStripeSession = async (payload: { reservationId: number; amou
 };
 
 export const approveOfflinePayment = async (paymentId: number, adminId: number) => {
-    const res = await apiInterceptor.put(`/payments/${paymentId}`, {status: 'APPROVED', adminId});
+    const res = await apiInterceptor.put(`/payments/${paymentId}`, {status: 'COMPLETED',  approvedBy: adminId});
     return res.data;
 };
 
