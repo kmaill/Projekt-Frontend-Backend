@@ -1,5 +1,11 @@
 package com.spacesync.backend.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.spacesync.backend.exceptions.ResourceNotFoundException;
 import com.spacesync.backend.model.Payment;
 import com.spacesync.backend.model.Reservation;
@@ -10,11 +16,6 @@ import com.spacesync.backend.repository.UserRepository;
 import com.spacesync.backend.requests.PaymentCreateRequest;
 import com.spacesync.backend.requests.PaymentStatusUpdateRequest;
 import com.spacesync.backend.responses.PaymentResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
@@ -58,8 +59,21 @@ public class PaymentServiceImpl implements PaymentService {
     public PaymentResponse updatePaymentStatus(Long id, PaymentStatusUpdateRequest request) {
         Payment payment = paymentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No payment of id: " + id));
 
-        if (request.getStatus() != null) payment.setStatus(request.getStatus());
-        if (request.getTransactionId() != null) payment.setTransactionId(request.getTransactionId());
+        if (request.getStatus() != null) {
+            payment.setStatus(request.getStatus());
+            
+            if ("COMPLETED".equals(request.getStatus().toString())) {
+                Reservation reservation = payment.getReservation();
+                if (reservation != null) {
+                    reservation.setStatus("CONFIRMED");
+                    reservationRepository.save(reservation);
+                }
+            }
+        }
+        
+        if (request.getTransactionId() != null) {
+            payment.setTransactionId(request.getTransactionId());
+        }
         
         if (request.getApprovedBy() != null) {
             User admin = userRepository.findById(request.getApprovedBy()).orElseThrow(() -> new ResourceNotFoundException("No admin of id: " + request.getApprovedBy()));
