@@ -1,90 +1,34 @@
-export const createReservationRequest = async (token: string, payload: { workspaceId: number; startTime: string; endTime: string; userId: number }) => {
-    const res = await fetch('http://localhost:8080/api/reservations', {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-        body: JSON.stringify(payload),
-    });
-    
-    if (!res.ok) {
-        const errorDetails = await res.text(); 
-        console.error("Szczegóły błędu:", errorDetails);
-        throw new Error(`Odmowa z backendu: ${errorDetails}`);
-    }
-    
-    return await res.json();
+import {apiInterceptor} from "./apiInterceptor.ts";
+
+export const createReservationRequest = async (payload: { workspaceId: number; startTime: string; endTime: string; userId: number }) => {
+    const res = await apiInterceptor.post('/reservations', payload);
+    return res.data;
 };
-export const addAddonToReservationRequest = async (token: string, payload: { reservationId: number; addonId: number; quantity: number }) => {
-    const res = await fetch('http://localhost:8080/api/reservation_addons', {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-        body: JSON.stringify(payload),
-    });
-    if (!res.ok) throw new Error("Błąd dodawania dodatku");
-    return await res.json();
+export const addAddonToReservationRequest = async (payload: { reservationId: number; addonId: number; quantity: number }) => {
+    const res = await apiInterceptor.post('/reservation_addons', payload);
+    return res.data;
 };
 
-export const createPaymentRequest = async (token: string, payload: { reservationId: number; amount: number; paymentMethod: 'ONLINE' | 'OFFLINE' }) => {
-    const res = await fetch('http://localhost:8080/api/payments', {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-        body: JSON.stringify(payload),
-    });
-    
-    if (!res.ok) {
-        const errDetails = await res.text();
-        throw new Error(`Błąd zapisu płatności w bazie: ${errDetails}`);
-    }
-    return await res.json();
+export const createPaymentRequest = async (payload: { reservationId: number; amount: number; paymentMethod: 'ONLINE' | 'OFFLINE' }) => {
+    const res = await apiInterceptor.post('/payments', payload);
+    return res.data;
 };
 
-export const createStripeSession = async (token: string, payload: { reservationId: number; amount: number; paymentMethod: string }) => {
-    const res = await fetch('http://localhost:8080/api/payments/stripe/create-session', {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify(payload)
-    });
-    
-    if (!res.ok) {
-        const errDetails = await res.text();
-        console.error("Szczegóły błędu Stripe:", errDetails);
-        throw new Error(`Odmowa Stripe: ${errDetails}`);
-    }
-    
-    return await res.json();
+export const createStripeSession = async (payload: { reservationId: number; amount: number; paymentMethod: string }) => {
+    const res = await apiInterceptor.post('/payments/stripe/create-session', payload);
+    return res.data;
 };
 
-export const approveOfflinePayment = async (token: string, paymentId: number, adminId: number) => {
-    const res = await fetch(`http://localhost:8080/api/payments/${paymentId}`, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({
-            status: "COMPLETED",
-            approvedBy: adminId
-        })
-    });
-    if (!res.ok) throw new Error("Błąd akceptacji płatności");
-    return await res.json();
+export const approveOfflinePayment = async (paymentId: number, adminId: number) => {
+    const res = await apiInterceptor.put(`/payments/${paymentId}`, {status: 'APPROVED', adminId});
+    return res.data;
 };
 
-export const getAllReservations = async (token: string) => {
-    const res = await fetch('http://localhost:8080/api/reservations', {
-        method: "GET",
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-    });
-    if (!res.ok) throw new Error("Błąd pobierania rezerwacji");
-    return await res.json();
+export const getAllReservations = async () => {
+    const res = await apiInterceptor.get('/reservations');
+    return res.data;
 };
 
-export const deleteReservation = async (token: string, id: number) => {
-    const res = await fetch(`http://localhost:8080/api/reservations/${id}`, {
-        method: "DELETE",
-        headers: { "Authorization": `Bearer ${token}` },
-    });
-    if (!res.ok) throw new Error("Błąd usuwania rezerwacji");
+export const deleteReservation = async (id: number) => {
+    await apiInterceptor.delete(`/reservations/${id}`);
 };

@@ -25,9 +25,9 @@ export const ReservationManager = () => {
     if (!token) return;
     try {
       const [resData, wsData, userData] = await Promise.all([
-        getAllReservations(token),
+        getAllReservations(),
         fetchWorkspaces(),
-        getAllUsers(token)
+        getAllUsers()
       ]);
       setReservations(resData);
       setWorkspaces(wsData);
@@ -44,7 +44,7 @@ export const ReservationManager = () => {
     const token = localStorage.getItem('token');
     if(token) {
         try {
-            await deleteReservation(token, id);
+            await deleteReservation(id);
             fetchData();
         } catch(e) {
             console.error(e);

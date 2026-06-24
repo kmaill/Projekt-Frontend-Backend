@@ -1,3 +1,5 @@
+import {apiInterceptor} from "./apiInterceptor.ts";
+
 export const loginRequest = async (email: string, password: string) => {
     const res = await fetch('http://localhost:8080/api/users/login', {
         method: "POST",
@@ -49,29 +51,16 @@ export const register = async (name: string, email: string, password: string) =>
 
 }
 
-export const getAllUsers = async (token: string) => {
-    const res = await fetch('http://localhost:8080/api/users', {
-        method: "GET",
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-    });
-    if (!res.ok) throw new Error("Failed to fetch users");
-    return await res.json();
+export const getAllUsers = async () => {
+    const res = await apiInterceptor.get('/users');
+    return res.data;
 };
 
-export const updateUserRole = async (token: string, id: number, role: string) => {
-    const res = await fetch(`http://localhost:8080/api/users/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-        body: JSON.stringify({ role }),
-    });
-    if (!res.ok) throw new Error("Failed to update user role");
-    return await res.json();
+export const updateUserRole = async (id: number, role: string) => {
+    const res = await apiInterceptor.put(`/users/${id}`, role);
+    return res.data;
 };
 
-export const deleteUser = async (token: string, id: number) => {
-    const res = await fetch(`http://localhost:8080/api/users/${id}`, {
-        method: "DELETE",
-        headers: { "Authorization": `Bearer ${token}` },
-    });
-    if (!res.ok) throw new Error("Failed to delete user");
+export const deleteUser = async (id: number) => {
+    await apiInterceptor.delete(`/users/${id}`);
 };

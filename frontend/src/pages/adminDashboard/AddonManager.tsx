@@ -37,7 +37,7 @@ export const AddonManager = () => {
     if(!confirm(t('adminPanel.addons.deleteConfirm'))) return;
     const token = localStorage.getItem('token');
     if(token) {
-        await deleteAddon(token, id);
+        await deleteAddon(id);
         fetchAddonsData();
     }
   };
@@ -47,9 +47,9 @@ export const AddonManager = () => {
     if(!token) return;
 
     if (editingAddon) {
-      await updateAddon(token, editingAddon.id, data);
+      await updateAddon(editingAddon.id, data);
     } else {
-      await createAddon(token, data);
+      await createAddon(data);
     }
     
     setIsModalOpen(false);

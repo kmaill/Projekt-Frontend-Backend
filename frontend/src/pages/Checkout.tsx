@@ -37,7 +37,7 @@ export const Checkout = () => {
         const formattedEndHour = endHour < 10 ? `0${endHour}` : `${endHour}`;
         const endDateTime = `${item.date}T${formattedEndHour}:${minutesPart < 10 ? '0' : ''}${minutesPart}:00`;
 
-        const reservation = await createReservationRequest(token, {
+        const reservation = await createReservationRequest({
           workspaceId: item.workspaceId,
           startTime: startDateTime,
           endTime: endDateTime,
@@ -49,7 +49,7 @@ export const Checkout = () => {
         }
 
         for (const addon of item.addons) {
-          await addAddonToReservationRequest(token, {
+          await addAddonToReservationRequest({
             reservationId: reservation.id,
             addonId: Number(addon.id),
             quantity: 1
@@ -58,14 +58,14 @@ export const Checkout = () => {
         
         const itemTotalAmount = item.pricePerHour * item.hours + item.addons.reduce((acc, a) => acc + (a.billing_type === 'PER_HOUR' ? a.price * item.hours : a.price), 0);
 
-        await createPaymentRequest(token, {
+        await createPaymentRequest({
           reservationId: reservation.id,
           amount: itemTotalAmount,
           paymentMethod: method
         });
 
         if (method === 'ONLINE') {
-          const { url } = await createStripeSession(token, {
+          const { url } = await createStripeSession({
             reservationId: reservation.id,
             amount: itemTotalAmount,
             paymentMethod: 'ONLINE'

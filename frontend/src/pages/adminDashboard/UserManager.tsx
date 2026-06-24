@@ -19,7 +19,7 @@ export const UserManager = () => {
     try {
       const token = localStorage.getItem('token');
       if(token) {
-        const data = await getAllUsers(token);
+        const data = await getAllUsers();
         setUsers(data);
       }
     } catch (e) {
@@ -32,7 +32,7 @@ export const UserManager = () => {
   const handleRoleChange = async (id: number, newRole: string) => {
     const token = localStorage.getItem('token');
     if(token) {
-      await updateUserRole(token, id, newRole);
+      await updateUserRole(id, newRole);
       fetchUsersData();
     }
   };
@@ -41,7 +41,7 @@ export const UserManager = () => {
     if(!confirm(t('adminPanel.users.deleteConfirm'))) return;
     const token = localStorage.getItem('token');
     if(token) {
-      await deleteUser(token, id);
+      await deleteUser(id);
       fetchUsersData();
     }
   };

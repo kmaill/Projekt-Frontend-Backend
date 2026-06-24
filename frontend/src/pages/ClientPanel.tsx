@@ -60,7 +60,7 @@ export const ClientPanel = () => {
         navigate('/login');
       } else {
         try {
-          const fetchAttempt = await fetchCompanyProfile(token);
+          const fetchAttempt = await fetchCompanyProfile();
           setCurrentInvoice({
             companyName: fetchAttempt.companyName,
             nip: fetchAttempt.nip,
@@ -84,7 +84,7 @@ export const ClientPanel = () => {
           navigate('/login');
         } else {
           try {
-            const fetchAttempt = await fetchCompanyProfile(token);
+            const fetchAttempt = await fetchCompanyProfile();
             setCurrentInvoice({
               companyName: fetchAttempt.companyName,
               nip: fetchAttempt.nip,
@@ -105,7 +105,7 @@ export const ClientPanel = () => {
       if (token && user?.id) {
         try {
           const [resData, wsData] = await Promise.all([
-            getAllReservations(token),
+            getAllReservations(),
             fetchWorkspaces()
           ]);
           const myReservations = resData.filter((r: any) => r.userId === user.id);
@@ -131,7 +131,7 @@ export const ClientPanel = () => {
         contactEmail: data.email
       };
 
-      await createCompanyProfile(token, payloadForBackend);
+      await createCompanyProfile(payloadForBackend);
       setEditCheck(false);
     }
   };

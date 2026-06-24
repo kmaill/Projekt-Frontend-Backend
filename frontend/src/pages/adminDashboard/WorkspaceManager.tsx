@@ -38,7 +38,7 @@ export const WorkspaceManager = () => {
     if(!confirm(t('adminPanel.workspaces.deleteConfirm'))) return;
     const token = localStorage.getItem('token');
     if(token) {
-        await deleteWorkspace(token, id);
+        await deleteWorkspace(id);
         fetchWorkspacesData();
     }
   };
@@ -48,9 +48,9 @@ export const WorkspaceManager = () => {
     if(!token) return;
 
     if (editingWorkspace) {
-      await updateWorkspace(token, editingWorkspace.id, data);
+      await updateWorkspace(editingWorkspace.id, data);
     } else {
-      await createWorkspace(token, data);
+      await createWorkspace(data);
     }
     
     setIsModalOpen(false);

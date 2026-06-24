@@ -42,7 +42,7 @@ export const AdminPanel = () => {
     const token = localStorage.getItem('token');
     if (token && user?.id) {
       try {
-        await approveOfflinePayment(token, paymentId, user.id);
+        await approveOfflinePayment(paymentId, user.id);
         loadPayments();
       } catch (e) {
       }
