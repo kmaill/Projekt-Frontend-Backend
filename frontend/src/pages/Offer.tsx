@@ -38,7 +38,21 @@ export const Offer = () => {
   };
 
   const handleAddToCart = () => {
-    if (!selectedSpace || !date || (date.getTime() <= Date.now() - 86400000)) return;
+    if (!selectedSpace || !date) return; // || (date.getTime() <= Date.now() - 86400000)
+
+    // const [currentTime, setCurrentTime] = useState<Date | null>(null);
+    var resTime = startTime.split(":");
+    var numResTime = resTime.map(Number);
+
+    const currDate = new Date();
+
+    currDate.setHours(numResTime[0]);
+    currDate.setMinutes(numResTime[1]);
+    // console.log(currDate.getHours(), currDate.getMinutes());
+    // console.log(currDate.getTime());
+    // console.log(date.getTime());
+
+    if(currDate.getTime() <= Date.now()) return;
 
     const addonsToAdd = addons.filter(a => selectedAddons.includes(a.id));
 
