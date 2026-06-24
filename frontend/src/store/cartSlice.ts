@@ -4,7 +4,7 @@ export interface Addon {
   id: string;
   name: string;
   price: number;
-  billing_type: 'PER_RESERVATION' | 'PER_HOUR';
+  billingType: 'PER_RESERVATION' | 'PER_HOUR';
 }
 
 export interface CartItem {
@@ -32,7 +32,7 @@ const calculateTotal = (items: CartItem[]) => {
   return items.reduce((acc, item) => {
     let itemTotal = item.pricePerHour * item.hours;
     item.addons.forEach(addon => {
-      if (addon.billing_type === 'PER_HOUR') {
+      if (addon.billingType === 'PER_HOUR') {
         itemTotal += addon.price * item.hours;
       } else {
         itemTotal += addon.price;

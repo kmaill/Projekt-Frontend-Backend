@@ -56,7 +56,7 @@ export const Checkout = () => {
           });
         }
         
-        const itemTotalAmount = item.pricePerHour * item.hours + item.addons.reduce((acc, a) => acc + (a.billing_type === 'PER_HOUR' ? a.price * item.hours : a.price), 0);
+        const itemTotalAmount = item.pricePerHour * item.hours + item.addons.reduce((acc, a) => acc + (a.billingType === 'PER_HOUR' ? a.price * item.hours : a.price), 0);
 
         await createPaymentRequest({
           reservationId: reservation.id,
@@ -117,7 +117,7 @@ export const Checkout = () => {
                     <strong>{t('checkout.addons')}</strong>
                     <ul className="list-disc pl-4 mt-1">
                       {item.addons.map(addon => (
-                        <li key={addon.id}>{addon.name} (+{addon.price} PLN{(addon as any).billing_type === 'PER_HOUR' || addon.billing_type === 'PER_HOUR' ? '/h' : ''})</li>
+                        <li key={addon.id}>{addon.name} (+{addon.price} PLN{addon.billingType === 'PER_HOUR' ? '/h' : ''})</li>
                       ))}
                     </ul>
                   </div>
@@ -126,7 +126,7 @@ export const Checkout = () => {
               <div className="text-right flex items-center sm:block gap-4">
                 <div>
                   <p className="font-bold text-lg whitespace-nowrap">
-                    {item.pricePerHour * item.hours + item.addons.reduce((acc, a) => acc + ((a as any).billing_type === 'PER_HOUR' || a.billing_type === 'PER_HOUR' ? a.price * item.hours : a.price), 0)} PLN
+                    {item.pricePerHour * item.hours + item.addons.reduce((acc, a) => acc + (a.billingType === 'PER_HOUR' ? a.price * item.hours : a.price), 0)} PLN
                   </p>
                 </div>
                 <button 

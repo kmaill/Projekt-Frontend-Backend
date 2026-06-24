@@ -62,7 +62,7 @@ export const AddonManager = () => {
       reset({ 
         name: addon.name, 
         price: addon.price, 
-        billingType: addon.billingType || (addon as any).billing_type || 'PER_RESERVATION'
+        billingType: addon.billingType || 'PER_RESERVATION'
       });
     } else {
       setEditingAddon(null);
@@ -97,8 +97,8 @@ export const AddonManager = () => {
                 <td className="p-4 text-gray-500 dark:text-gray-400">#{a.id}</td>
                 <td className="p-4 font-semibold text-gray-900 dark:text-gray-100">{a.name}</td>
                 <td className="p-4">
-                  <span className={`px-2 py-1 text-xs font-bold rounded-full ${(a.billingType === 'PER_HOUR' || (a as any).billing_type === 'PER_HOUR') ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-300' : 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/40 dark:text-indigo-300'}`}>
-                    {(a.billingType === 'PER_HOUR' || (a as any).billing_type === 'PER_HOUR') ? 'PER_HOUR' : 'PER_RESERVATION'}
+                  <span className={`px-2 py-1 text-xs font-bold rounded-full ${a.billingType === 'PER_HOUR' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-300' : 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/40 dark:text-indigo-300'}`}>
+                    {a.billingType === 'PER_HOUR' ? 'PER_HOUR' : 'PER_RESERVATION'}
                   </span>
                 </td>
                 <td className="p-4 text-emerald-600 dark:text-emerald-400 font-bold">{a.price} PLN</td>

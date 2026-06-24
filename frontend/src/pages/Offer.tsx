@@ -165,7 +165,7 @@ export const Offer = () => {
                         <input type="checkbox" checked={selectedAddons.includes(addon.id)} onChange={() => toggleAddon(addon.id)} className="w-4 h-4 text-emerald-600" />
                         <div className="flex justify-between w-full">
                           <span>{addon.name}</span>
-                          <span className="font-semibold">+{addon.price} PLN {addon.billing_type === 'PER_HOUR' ? '/h' : ''}</span>
+                          <span className="font-semibold">+{addon.price} PLN {addon.billingType === 'PER_HOUR' ? '/h' : ''}</span>
                         </div>
                       </label>
                     ))}
