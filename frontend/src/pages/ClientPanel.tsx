@@ -148,21 +148,21 @@ export const ClientPanel = () => {
             return (
               <div key={r.id} className="bg-white dark:bg-gray-800 p-5 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
                 <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-bold text-lg">{ws ? ws.name : `ID Przestrzeni: ${r.workspaceId}`}</h3>
+                  <h3 className="font-bold text-lg">{ws ? ws.name : `${t('clientPanel.res.workspaceId')}: ${r.workspaceId}`}</h3>
                   <span className={`text-xs px-2 py-1 rounded-full font-semibold ${r.status === 'CONFIRMED' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300' : r.status === 'CANCELLED' ? 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300' : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300'}`}>
-                    {r.status}
+                    {t(`clientPanel.res.status.${r.status}`)}
                   </span>
                 </div>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-                  Początek: {new Date(r.startTime).toLocaleString()}
+                  {t('clientPanel.res.start')}: {new Date(r.startTime).toLocaleString()}
                 </p>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Koniec: {new Date(r.endTime).toLocaleString()}
+                  {t('clientPanel.res.end')}: {new Date(r.endTime).toLocaleString()}
                 </p>
               </div>
             )
           }) : (
-            <p className="text-gray-500 dark:text-gray-400">Brak przypisanych rezerwacji.</p>
+            <p className="text-gray-500 dark:text-gray-400">{t('clientPanel.res.noData')}</p>
           )}
 
         </div>

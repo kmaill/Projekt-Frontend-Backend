@@ -38,19 +38,15 @@ export const Offer = () => {
   };
 
   const handleAddToCart = () => {
-    if (!selectedSpace || !date) return; // || (date.getTime() <= Date.now() - 86400000)
+    if (!selectedSpace || !date) return;
 
-    // const [currentTime, setCurrentTime] = useState<Date | null>(null);
     var resTime = startTime.split(":");
     var numResTime = resTime.map(Number);
 
-    const currDate = new Date();
+    const currDate = new Date(date.getTime());
 
     currDate.setHours(numResTime[0]);
     currDate.setMinutes(numResTime[1]);
-    // console.log(currDate.getHours(), currDate.getMinutes());
-    // console.log(currDate.getTime());
-    // console.log(date.getTime());
 
     if(currDate.getTime() <= Date.now()) return;
 

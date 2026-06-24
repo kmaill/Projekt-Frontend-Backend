@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Copy, CheckCircle, ArrowLeft, Building2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface OfflinePaymentProps {
   amount: number;
@@ -9,6 +10,7 @@ interface OfflinePaymentProps {
 
 export const OfflinePaymentScreen = ({ amount, reservationId, onBack }: OfflinePaymentProps) => {
   const [copiedField, setCopiedField] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   const bankDetails = {
     companyName: "SpaceSync Sp. z o.o.",
@@ -32,7 +34,7 @@ export const OfflinePaymentScreen = ({ amount, reservationId, onBack }: OfflineP
         className="flex items-center text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white mb-6 transition-colors"
       >
         <ArrowLeft className="w-5 h-5 mr-2" />
-        Wróć do rezerwacji
+        {t('payment.offline.backToRes')}
       </button>
 
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
@@ -41,20 +43,20 @@ export const OfflinePaymentScreen = ({ amount, reservationId, onBack }: OfflineP
             <Building2 className="w-8 h-8" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Przelew tradycyjny</h1>
-            <p className="text-gray-500 dark:text-gray-400 mt-1">Opłać rezerwację zgodnie z poniższymi danymi</p>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t('payment.offline.title')}</h1>
+            <p className="text-gray-500 dark:text-gray-400 mt-1">{t('payment.offline.subtitle')}</p>
           </div>
         </div>
 
         <div className="p-6 space-y-6">
           <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-900/50 rounded-lg p-4 text-sm text-yellow-800 dark:text-yellow-300">
-            Pamiętaj, aby w tytule przelewu wpisać <strong>dokładnie</strong> podany niżej tytuł. Przyspieszy to proces księgowania i zatwierdzenia Twojej rezerwacji.
+            {t('payment.offline.warning')}
           </div>
 
           <div className="space-y-4">
             <div className="flex justify-between items-center p-4 bg-gray-50 dark:bg-gray-700/30 rounded-lg border border-gray-100 dark:border-gray-700">
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Odbiorca</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">{t('payment.offline.receiver')}</p>
                 <p className="font-medium text-gray-900 dark:text-white">{bankDetails.companyName}</p>
                 <p className="text-sm text-gray-600 dark:text-gray-300">{bankDetails.bankName}</p>
               </div>
@@ -62,7 +64,7 @@ export const OfflinePaymentScreen = ({ amount, reservationId, onBack }: OfflineP
 
             <div className="flex justify-between items-center p-4 bg-gray-50 dark:bg-gray-700/30 rounded-lg border border-gray-100 dark:border-gray-700">
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Numer konta (IBAN)</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">{t('payment.offline.iban')}</p>
                 <p className="font-mono font-bold text-lg text-gray-900 dark:text-white tracking-wide">{bankDetails.iban}</p>
               </div>
               <button 
@@ -76,7 +78,7 @@ export const OfflinePaymentScreen = ({ amount, reservationId, onBack }: OfflineP
 
             <div className="flex justify-between items-center p-4 bg-gray-50 dark:bg-gray-700/30 rounded-lg border border-gray-100 dark:border-gray-700">
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Tytuł przelewu</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">{t('payment.offline.transferTitle')}</p>
                 <p className="font-medium text-gray-900 dark:text-white">{bankDetails.title}</p>
               </div>
               <button 
@@ -90,7 +92,7 @@ export const OfflinePaymentScreen = ({ amount, reservationId, onBack }: OfflineP
 
             <div className="flex justify-between items-center p-4 bg-gray-50 dark:bg-gray-700/30 rounded-lg border border-gray-100 dark:border-gray-700">
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Kwota do zapłaty</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">{t('payment.offline.amount')}</p>
                 <p className="font-bold text-xl text-blue-600 dark:text-blue-400">{bankDetails.amount}</p>
               </div>
               <button 

@@ -93,6 +93,17 @@ const resources = {
           "city": "City is required",
           "postalCode": "Invalid postal code format",
           "email": "Invalid e-mail format"
+        },
+        "res": {
+          "workspaceId": "Workspace ID",
+          "start": "Start",
+          "end": "End",
+          "noData": "No assigned reservations.",
+          "status": {
+            "PENDING": "PENDING",
+            "CONFIRMED": "CONFIRMED",
+            "CANCELLED": "CANCELLED"
+          }
         }
       },
       "adminPanel": {
@@ -212,6 +223,31 @@ const resources = {
         "orRegisterWith": "or register with",
         "haveAccount": "Already have an account?",
         "loginLink": "Log in"
+      },
+      "payment": {
+        "offline": {
+          "backToRes": "Back to reservation",
+          "title": "Bank Transfer",
+          "subtitle": "Pay for your reservation using the details below",
+          "warning": "Remember to enter the exact title shown below. It will speed up the booking process.",
+          "receiver": "Receiver",
+          "iban": "Account Number (IBAN)",
+          "transferTitle": "Transfer Title",
+          "amount": "Amount to pay"
+        },
+        "success": {
+          "title": "Success!",
+          "desc": "Reservation ID: {{id}} has been paid and confirmed.",
+          "btn": "Client Panel"
+        },
+        "failed": {
+          "title": "Payment failed",
+          "desc": "Transaction could not be completed. Try again or choose another method.",
+          "btn": "Back to cart"
+        },
+        "oauth": {
+          "loading": "Logging in..."
+        }
       }
     }
   },
@@ -306,6 +342,17 @@ const resources = {
           "city": "Miasto jest wymagane",
           "postalCode": "Niepoprawny kod pocztowy (np. 00-000)",
           "email": "Niepoprawny format adresu e-mail"
+        },
+        "res": {
+          "workspaceId": "ID Przestrzeni",
+          "start": "Początek",
+          "end": "Koniec",
+          "noData": "Brak przypisanych rezerwacji.",
+          "status": {
+            "PENDING": "OCZEKUJĄCA",
+            "CONFIRMED": "POTWIERDZONA",
+            "CANCELLED": "ANULOWANA"
+          }
         }
       },
       "adminPanel": {
@@ -425,6 +472,31 @@ const resources = {
         "orRegisterWith": "lub zaloguj przez",
         "haveAccount": "Masz już konto?",
         "loginLink": "Zaloguj się"
+      },
+      "payment": {
+        "offline": {
+          "backToRes": "Wróć do rezerwacji",
+          "title": "Przelew tradycyjny",
+          "subtitle": "Opłać rezerwację zgodnie z poniższymi danymi",
+          "warning": "Pamiętaj, aby w tytule przelewu wpisać dokładnie podany niżej tytuł. Przyspieszy to proces księgowania i zatwierdzenia Twojej rezerwacji.",
+          "receiver": "Odbiorca",
+          "iban": "Numer konta (IBAN)",
+          "transferTitle": "Tytuł przelewu",
+          "amount": "Kwota do zapłaty"
+        },
+        "success": {
+          "title": "Sukces!",
+          "desc": "Rezerwacja ID: {{id}} została opłacona i potwierdzona.",
+          "btn": "Panel Klienta"
+        },
+        "failed": {
+          "title": "Płatność odrzucona",
+          "desc": "Transakcja nie mogła zostać zrealizowana. Spróbuj ponownie lub wybierz inną metodę.",
+          "btn": "Wróć do koszyka"
+        },
+        "oauth": {
+          "loading": "Trwa logowanie..."
+        }
       }
     }
   }
