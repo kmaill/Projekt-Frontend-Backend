@@ -111,7 +111,11 @@ const resources = {
           "title": "Administrator Panel",
           "offlinePayments": {
             "title": "Offline Payments",
-            "desc": "Approve payments from corporate clients."
+            "desc": "Approve payments from corporate clients.",
+            "resId": "Reservation #{{id}}",
+            "toPay": "To pay: {{amount}} PLN",
+            "approve": "Approve",
+            "noData": "No payments to approve."
           },
           "workspaces": {
             "title": "Workspace Management",
@@ -359,8 +363,12 @@ const resources = {
         "dashboard": {
           "title": "Panel Administratora",
           "offlinePayments": {
-            "title": "Płatności Offline",
-            "desc": "Zatwierdzaj wpłaty od klientów korporacyjnych."
+            "title": "Przelewy Tradycyjne",
+            "desc": "Zatwierdzaj wpłaty od klientów biznesowych.",
+            "resId": "Rezerwacja #{{id}}",
+            "toPay": "Do zapłaty: {{amount}} PLN",
+            "approve": "Zatwierdź",
+            "noData": "Brak płatności do zatwierdzenia."
           },
           "workspaces": {
             "title": "Zarządzanie Przestrzeniami",

@@ -75,18 +75,18 @@ export const AdminPanel = () => {
               {pendingPayments.length > 0 ? pendingPayments.map(payment => (
                 <div key={payment.id} className="bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800/50 p-3 rounded-md flex justify-between items-center transition-colors">
                   <div>
-                    <p className="text-sm font-bold text-yellow-800 dark:text-yellow-400">Rezerwacja #{payment.reservationId}</p>
-                    <p className="text-xs text-yellow-700 dark:text-yellow-500">Do zapłaty: {payment.amount} PLN</p>
+                    <p className="text-sm font-bold text-yellow-800 dark:text-yellow-400">{t('adminPanel.dashboard.offlinePayments.resId', { id: payment.reservationId })}</p>
+                    <p className="text-xs text-yellow-700 dark:text-yellow-500">{t('adminPanel.dashboard.offlinePayments.toPay', { amount: payment.amount })}</p>
                   </div>
                   <button 
                     onClick={() => handleApprove(payment.id)}
                     className="bg-yellow-600 text-white text-xs px-3 py-1 rounded hover:bg-yellow-700 transition-colors"
                   >
-                    Zatwierdź
+                    {t('adminPanel.dashboard.offlinePayments.approve')}
                   </button>
                 </div>
               )) : (
-                <p className="text-sm text-gray-500 dark:text-gray-400">Brak płatności do zatwierdzenia.</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{t('adminPanel.dashboard.offlinePayments.noData')}</p>
               )}
             </div>
           </div>
