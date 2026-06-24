@@ -55,7 +55,6 @@ export const Login = () => {
           <div>
             <div className="flex justify-between items-center mb-1">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('loginPage.passwordLabel')}</label>
-              <a href="#" className="text-sm text-emerald-600 dark:text-emerald-400 hover:underline">{t('loginPage.forgotPassword')}</a>
             </div>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
