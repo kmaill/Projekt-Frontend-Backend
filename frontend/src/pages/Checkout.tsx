@@ -1,9 +1,12 @@
+import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../store/store';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { removeItem, clearCart } from '../store/cartSlice';
 import { createReservationRequest, addAddonToReservationRequest, createPaymentRequest, createStripeSession } from '../api/reservationApi';
+
+import { OfflinePaymentScreen } from './OfflinePaymentScreen';
 
 export const Checkout = () => {
   const { t } = useTranslation();
@@ -12,6 +15,9 @@ export const Checkout = () => {
   
   const { items, total } = useSelector((state: RootState) => state.cart);
   const { user, isAuthenticated } = useSelector((state: RootState) => state.auth);
+
+  const [showOfflinePayment, setShowOfflinePayment] = useState(false);
+  const [offlinePaymentData, setOfflinePaymentData] = useState({ amount: 0, reservationId: 0 });
 
   const handleCheckout = async (method: 'ONLINE' | 'OFFLINE') => {
     const token = localStorage.getItem('token');
@@ -22,6 +28,8 @@ export const Checkout = () => {
     }
 
     try {
+      let firstReservationId = 0;
+
       for (const item of items) {
         const startDateTime = `${item.date}T${item.startTime}:00`;
         const [hoursPart, minutesPart] = item.startTime.split(':').map(Number);
@@ -36,6 +44,10 @@ export const Checkout = () => {
           userId: user.id
         });
 
+        if (firstReservationId === 0) {
+          firstReservationId = reservation.id;
+        }
+
         for (const addon of item.addons) {
           await addAddonToReservationRequest(token, {
             reservationId: reservation.id,
@@ -43,6 +55,7 @@ export const Checkout = () => {
             quantity: 1
           });
         }
+        
         const itemTotalAmount = item.pricePerHour * item.hours + item.addons.reduce((acc, a) => acc + (a.billing_type === 'PER_HOUR' ? a.price * item.hours : a.price), 0);
 
         await createPaymentRequest(token, {
@@ -65,15 +78,25 @@ export const Checkout = () => {
       }
 
       if (method === 'OFFLINE') {
-        alert("Rezerwacja z płatnością tradycyjnym przelewem została pomyślnie złożona!");
+        setOfflinePaymentData({ amount: total, reservationId: firstReservationId });
         dispatch(clearCart());
-        navigate('/client');
+        setShowOfflinePayment(true);
       }
 
     } catch (error: any) {
       alert(error.message || "Wystąpił błąd podczas składania rezerwacji.");
     }
   };
+
+  if (showOfflinePayment) {
+    return (
+      <OfflinePaymentScreen 
+        amount={offlinePaymentData.amount} 
+        reservationId={offlinePaymentData.reservationId} 
+        onBack={() => navigate('/client')} 
+      />
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-10 w-full dark:text-gray-100 transition-colors">

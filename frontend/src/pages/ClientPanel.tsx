@@ -159,9 +159,6 @@ export const ClientPanel = () => {
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   Koniec: {new Date(r.endTime).toLocaleString()}
                 </p>
-                <p className="text-sm text-gray-600 dark:text-gray-400 font-bold mt-2">
-                  Koszt: {r.totalPrice} PLN
-                </p>
               </div>
             )
           }) : (
