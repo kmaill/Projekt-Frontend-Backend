@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../store/store';
 import { approveOfflinePayment } from '../api/reservationApi';
-
+import { apiInterceptor } from '../api/apiInterceptor';
 export const AdminPanel = () => {
   const { t } = useTranslation();
   const [view, setView] = useState<'DASHBOARD' | 'WORKSPACES' | 'USERS' | 'ADDONS' | 'RESERVATIONS'>('DASHBOARD');
@@ -17,17 +17,11 @@ export const AdminPanel = () => {
   const [pendingPayments, setPendingPayments] = useState<any[]>([]);
 
   const loadPayments = async () => {
-    const token = localStorage.getItem('token');
-    if (!token) return;
     try {
-      const res = await fetch('http://localhost:8080/api/payments', {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      if (res.ok) {
-        const data = await res.json();
-        const offlinePending = data.filter((p: any) => p.status === 'PENDING' && p.paymentMethod === 'OFFLINE');
-        setPendingPayments(offlinePending);
-      }
+      const res = await apiInterceptor.get('/payments');
+      const data = res.data;
+      const offlinePending = data.filter((p: any) => p.status === 'PENDING' && p.paymentMethod === 'OFFLINE');
+      setPendingPayments(offlinePending);
     } catch (e) {
     }
   };

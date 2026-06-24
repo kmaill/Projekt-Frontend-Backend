@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CheckCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { apiInterceptor } from '../api/apiInterceptor';
 
 export const PaymentSuccess = () => {
   const navigate = useNavigate();
@@ -13,12 +14,7 @@ export const PaymentSuccess = () => {
     console.log("Strona sukcesu załadowana. ID rezerwacji:", reservationId);
 
     if (reservationId) {
-       fetch(`http://localhost:8080/api/reservations/confirm/${reservationId}`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      })
+       apiInterceptor.post(`/reservations/confirm/${reservationId}`)
       .then(res => {
         console.log("Odpowiedź z serwera:", res.status);
       })
