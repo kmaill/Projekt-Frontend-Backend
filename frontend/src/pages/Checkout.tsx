@@ -31,12 +31,27 @@ export const Checkout = () => {
       let firstReservationId = 0;
 
       for (const item of items) {
+
         const startDateTime = `${item.date}T${item.startTime}:00`;
         const [hoursPart, minutesPart] = item.startTime.split(':').map(Number);
-        const endHour = hoursPart + item.hours;
-        const formattedEndHour = endHour < 10 ? `0${endHour}` : `${endHour}`;
-        const endDateTime = `${item.date}T${formattedEndHour}:${minutesPart < 10 ? '0' : ''}${minutesPart}:00`;
+        let endHour: number;
+        let formattedEndHour;
+        let endDateTime;
+        const [year, month, day] = item.date.split('-').map(Number);
+        if((hoursPart + item.hours) >= 24) {
+          let temp: number = hoursPart + item.hours;
+          endHour = temp%24;
+          console.log(endHour);
+          formattedEndHour = endHour < 10 ? `0${endHour}` : `${endHour}`;
+          endDateTime = `${year}-${month < 10 ? '0' : ''}${month}-${day + Math.floor(temp/24)}T${formattedEndHour}:${minutesPart < 10 ? '0' : ''}${minutesPart}:00`;
+          console.log(endDateTime);
+        } else {
+          endHour = hoursPart + item.hours;
+          formattedEndHour = endHour < 10 ? `0${endHour}` : `${endHour}`;
+          endDateTime = `${item.date}T${formattedEndHour}:${minutesPart < 10 ? '0' : ''}${minutesPart}:00`;
+        }
 
+        console.log(hoursPart + item.hours);
         const reservation = await createReservationRequest({
           workspaceId: item.workspaceId,
           startTime: startDateTime,
