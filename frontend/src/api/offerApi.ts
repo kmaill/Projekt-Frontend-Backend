@@ -27,7 +27,7 @@ export const fetchAddons = async () => {
 };
 
 export const createAddon = async (payload: any) => {
-    const res = await apiInterceptor.post(`/addons/`, payload);
+    const res = await apiInterceptor.post(`/addons`, payload);
     return res.data;
 };
 
