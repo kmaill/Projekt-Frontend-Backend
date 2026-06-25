@@ -2,6 +2,8 @@ import { getAllUsers, updateUserRole, deleteUser } from '../../api/userApi';
 import { useState, useEffect } from 'react';
 import { Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../../store/store';
 
 interface User {
   id: number;
@@ -14,6 +16,8 @@ interface User {
 export const UserManager = () => {
   const { t } = useTranslation();
   const [users, setUsers] = useState<User[]>([]);
+
+  const { user } = useSelector((state: RootState) => state.auth);
 
   const fetchUsersData = async () => {
     try {
@@ -30,6 +34,7 @@ export const UserManager = () => {
   useEffect(() => { fetchUsersData(); }, []);
 
   const handleRoleChange = async (id: number, newRole: string) => {
+    if(id === user?.id) return;
     const token = localStorage.getItem('token');
     if(token) {
       await updateUserRole(id, newRole);
@@ -38,6 +43,7 @@ export const UserManager = () => {
   };
 
   const handleDeleteUser = async (id: number) => {
+    if(id === user?.id) return;
     if(!confirm(t('adminPanel.users.deleteConfirm'))) return;
     const token = localStorage.getItem('token');
     if(token) {
