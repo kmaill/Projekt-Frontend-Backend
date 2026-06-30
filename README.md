@@ -1,5 +1,5 @@
-# Projekt-Frontend-Backend
-Projekt Frontend/Backend - SpaceSync aplikacja do zarządzania przestrzenią biurową
+# SpaceSync
+SpaceSync - aplikacja do zarządzania przestrzenią biurową
 
 # Backend
 Uruchomienie backendu:
